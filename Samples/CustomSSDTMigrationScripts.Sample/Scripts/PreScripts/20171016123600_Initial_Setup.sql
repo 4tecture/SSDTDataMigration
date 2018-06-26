@@ -1,0 +1,1 @@
+﻿PRINT 'Initial setup pre-script'

@@ -1,0 +1,7 @@
+﻿CREATE FUNCTION [dbo].[GetTotalCustomerNum]
+()
+RETURNS INT
+AS
+BEGIN
+	RETURN (SELECT COUNT(*) FROM Customer)
+END

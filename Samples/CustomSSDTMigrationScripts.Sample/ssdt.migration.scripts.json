@@ -1,0 +1,37 @@
+﻿{
+  "PreScripts": {
+    //"ScriptBaseDirectory": "$(MSBuildProjectDirectory)\\Scripts\\PreScripts",
+    "ScriptNamePattern": "^(\\d{14})_(.*).sql",
+    "ScriptRecursiveSearch": true,
+    //"GeneratedScriptPath": "$(MSBuildProjectDirectory)\\Scripts\\RunPreScriptsGenerated.sql",
+    "ExecutionFilterMode": "all", // "all", "days", "date"
+    "ExecutionFilterValue": "",
+
+    "TreatScriptNamePatternMismatchAsError": true,
+    "TreatHashMismatchAsError": true
+  },
+
+  "PostScripts": {
+    //"ScriptBaseDirectory": "$(MSBuildProjectDirectory)\\Scripts\\PostScripts",
+    "ScriptNamePattern": "^(\\d{14})_(.*).sql",
+    "ScriptRecursiveSearch": true,
+    //"GeneratedScriptPath": "$(MSBuildProjectDirectory)\\Scripts\\RunPostScriptsGenerated.sql",
+    "ExecutionFilterMode": "all", // "all", "days", "date"
+    "ExecutionFilterValue": "",
+
+    "TreatScriptNamePatternMismatchAsError": true,
+    "TreatHashMismatchAsError": true
+  },
+
+  "ReferenceDataScripts": {
+    //"ScriptBaseDirectory": "$(MSBuildProjectDirectory)\\Scripts\\ReferenceDataScripts",
+    "ScriptNamePattern": "^(\\d+)_(.*).sql",
+    "ScriptRecursiveSearch": true,
+    //"GeneratedScriptPath": "$(MSBuildProjectDirectory)\\Scripts\\RunReferenceDataScriptsGenerated.sql",
+    "ExecutionFilterMode": "all", // "none", "days", "date"
+    "ExecutionFilterValue": "",
+
+    "TreatScriptNamePatternMismatchAsError": true,
+    "TreatHashMismatchAsError": true
+  }
+}
