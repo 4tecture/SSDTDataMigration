@@ -1,0 +1,60 @@
+﻿<Project Sdk="MSBuild.Sdk.SqlProj/1.8.1">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <SqlServerVersion>Sql130</SqlServerVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="4tecture.CustomSSDTMigrationScripts" Version="1.0.1-nuget-package0042">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\CustomSSDTMigrationScripts.Integration.Tests\Functions\**\*.sql">
+      <Link>Functions\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Integration.Tests\StoredProcedures\**\*.sql">
+      <Link>StoredProcedures\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Integration.Tests\Tables\**\*.sql">
+      <Link>Tables\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Integration.Tests\UserDefinedDataTypes\**\*.sql">
+      <Link>UserDefinedDataTypes\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Integration.Tests\Views\**\*.sql">
+      <Link>Views\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Integration.Tests\Scripts\PostScripts\**\*.sql">
+      <Link>Scripts\PostScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Integration.Tests\Scripts\PreScripts\**\*.sql">
+      <Link>Scripts\PreScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Integration.Tests\Scripts\ReferenceDataScripts\**\*.sql">
+      <Link>Scripts\ReferenceDataScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+    <PreDeploy Include="Scripts\Script.PreDeployment.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Scripts\RunPostScriptsGenerated.sql" />
+    <Content Remove="Scripts\RunPreScriptsGenerated.sql" />
+    <Content Remove="Scripts\RunReferenceDataScriptsGenerated.sql" />
+    <Content Remove="Scripts\Script.PostDeployment.sql" />
+    <Content Remove="Scripts\Script.PreDeployment.sql" />
+  </ItemGroup>
+
+  <Target Name="DeleteGeneratedFiles" BeforeTargets="PreBuildEvent">
+    <Message Text="Deleting $(ProjectDir)Scripts\Run*Generated.sql" />
+    <Delete Files="$(ProjectDir)Scripts\Run*Generated.sql" />
+  </Target>
+
+</Project>

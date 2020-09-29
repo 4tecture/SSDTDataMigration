@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Import Project="..\..\CustomSSDTMigrationScripts\bin\Debug\CustomSSDTMigrationScripts.props" Condition="'$(Configuration)' == 'Debug'" />
-  <Import Project="..\..\CustomSSDTMigrationScripts\bin\Release\CustomSSDTMigrationScripts.props" Condition="'$(Configuration)' == 'Release'" />
+  <Import Project=".\Scripts.targets" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -14,12 +13,12 @@
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>CustomSSDTDataMigration.Sample</RootNamespace>
-    <AssemblyName>CustomSSDTDataMigration.Sample</AssemblyName>
+    <RootNamespace>CustomSSDTMigrationScripts.Sample</RootNamespace>
+    <AssemblyName>CustomSSDTMigrationScripts.Sample</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetLanguage>CS</TargetLanguage>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
@@ -49,7 +48,6 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -90,13 +88,14 @@
     <None Include="Scripts\RunReferenceDataScriptsGenerated.sql" />
   </ItemGroup>
   <ItemGroup>
-    <RefactorLog Include="SSDTDataMigrationPrototype.refactorlog" />
+    <RefactorLog Include="CustomSSDTMigrationScripts.Sample.refactorlog" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\PreScripts\20171016123600_Initial_Setup.sql" />
     <None Include="ssdt.migration.scripts.json" />
     <None Include="Scripts\ReferenceDataScripts\1_PaymetMethodInit.sql" />
     <None Include="ssdt.migration.scripts.sample.json" />
+    <None Include="Scripts.targets" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

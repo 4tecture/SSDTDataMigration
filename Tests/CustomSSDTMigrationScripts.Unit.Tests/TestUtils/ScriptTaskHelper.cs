@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace CustomSSDTMigrationScripts.Unit.Tests.TestUtils
 {
@@ -51,7 +51,7 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.TestUtils
         {
             settings = settings ?? new Settings();
 
-            var settingsContent = JsonConvert.SerializeObject(settings);
+            var settingsContent = JsonSerializer.Serialize(settings);
             File.WriteAllText(Path.Combine(directory, SETTINGS_FILENAME), settingsContent, Encoding.UTF8);
         }
     }

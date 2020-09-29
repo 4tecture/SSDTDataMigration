@@ -1,31 +1,31 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace CustomSSDTMigrationScripts
 {
     public class ScriptSettings
     {
-        [JsonProperty("ScriptBaseDirectory")]
+        [JsonPropertyName("ScriptBaseDirectory")]
         public string ScriptBaseDirectory { get; set; }
 
-        [JsonProperty("ScriptNamePattern")]
+        [JsonPropertyName("ScriptNamePattern")]
         public string ScriptNamePattern { get; set; }
 
-        [JsonProperty("ScriptRecursiveSearch")]
+        [JsonPropertyName("ScriptRecursiveSearch")]
         public bool? ScriptRecursiveSearch { get; set; }
 
-        [JsonProperty("GeneratedScriptPath")]
+        [JsonPropertyName("GeneratedScriptPath")]
         public string GeneratedScriptPath { get; set; }
 
-        [JsonProperty("ExecutionFilterMode")]
+        [JsonPropertyName("ExecutionFilterMode")]
         public string ExecutionFilterMode { get; set; }
 
-        [JsonProperty("ExecutionFilterValue")]
+        [JsonPropertyName("ExecutionFilterValue")]
         public string ExecutionFilterValue { get; set; }
 
-        [JsonProperty("TreatScriptNamePatternMismatchAsError")]
+        [JsonPropertyName("TreatScriptNamePatternMismatchAsError")]
         public bool? TreatScriptNamePatternMismatchAsError { get; set; }
 
-        [JsonProperty("TreatHashMismatchAsError")]
+        [JsonPropertyName("TreatHashMismatchAsError")]
         public bool? TreatHashMismatchAsError { get; set; }
     }
 }

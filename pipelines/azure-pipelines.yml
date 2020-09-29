@@ -1,0 +1,192 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+name : CustomSSDTMigrationScripts-CI
+trigger:
+  branches:
+    include:
+      - master
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  BuildConfiguration: Release
+
+resources:
+  containers:
+  - container: buildagent
+    image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
+
+stages:
+- stage: build
+  displayName: 'CustomSSDTMigrationScripts - Build the Framework'
+  jobs:
+  - job: CI_Build
+    displayName: 'CustomSSDTMigrationScripts - Build, Pack and Test'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.x'
+
+    - pwsh: |
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest -Uri "https://github.com/4tecture/SSDTDataMigration/releases/download/untagged-8c8c5eae85e1f1e33b69/4tecture.CustomSSDTMigrationScripts.msi" -OutFile "$(agent.tempdirectory)\4tecture.CustomSSDTMigrationScripts.msi"
+
+        msiexec /i "$(agent.tempdirectory)\4tecture.CustomSSDTMigrationScripts.msi" /qn /norestart
+      displayName: 'Install Custom SSDT Extension'
+
+    - task: BuildVersioning@0
+      displayName: 'Build Versioning'
+      target: host
+      inputs:
+        versionSource: 'gitversion'
+        doInstallGitVersion: true
+        GitVersionInstallerSource: 'nuget'
+        GitVersionInstallerVersion: '5.0.1'
+        doUseLatestGitVersionInstallerVersion: false
+        paramAssemblyVersion: '7'
+        paramAssemblyFileVersion: '7'
+        paramAssemblyInformationalVersion: '6'
+        paramOverwriteFourthDigitWithBuildCounter: false
+        paramVersionCode: '2'
+        doAssemblyInfoAppendSuffix: false
+        doConvertAssemblyInfoToLowerCase: true
+        buildNumberVersionFormat: '3'
+        buildNumberAction: 'replace'
+        doReplaceAssemblyInfo: false
+        doReplaceNuspec: false
+        doReplaceNpm: true
+        filePatternNpm: '**\package.json'
+        paramNpmVersionType: '2'
+        doReplaceDotNetCore: true
+        filePatternDotNetCore: |
+          **\*.csproj
+          **\*.props
+          **\*.targets
+        paramDotNetCoreVersionType: '3'
+        doReplaceAndroid: false
+        doReplaceiOS: false
+        doReplaceCustom: true
+        filePatternCustom: '**\*.targets'
+        paramCustomSearchRegex: '(\d+\.\d+\.\d+(?:\.\d+)?)'
+        paramCustomReplaceRegex: '$(BuildVersion.VersionInfo)'
+        doShowWarningsForUnmatchedRegex: true
+        excludeFilePattern: |
+          !**/bin/**
+          !**/obj/**
+          !**/node_modules/**
+          !**/packages/**
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore packages'
+      inputs:
+        command: 'restore'
+        projects: |
+          **/CustomSSDTMigrationScripts.csproj
+          **/Tests/**/CustomSSDTMigrationScripts.Unit.Tests.csproj
+        feedsToUse: 'select'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build solution'
+      inputs:
+        command: 'build'
+        projects: |
+          **/CustomSSDTMigrationScripts.csproj
+          **/Tests/**/CustomSSDTMigrationScripts.Unit.Tests.csproj
+        arguments: '-c $(BuildConfiguration) --no-restore'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Create nuget packages'
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/CustomSSDTMigrationScripts.csproj'
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
+        versioningScheme: 'off'
+
+    - task: PublishSymbols@2
+      displayName: 'Publish symbols path'
+      inputs:
+        SearchPattern: '**/bin/**/*.pdb'
+        IndexSources: false
+        SymbolServerType: 'TeamServices'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      enabled: false
+
+    - publish: '$(Build.ArtifactStagingDirectory)/packages'
+      displayName: 'Publish Artifact: nuget packages'
+      artifact: 'packages'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+    - task: VSBuild@1
+      displayName: 'Build installer'
+      inputs:
+        solution: 'Installer/CustomSSDTMigrationScripts.Setup/CustomSSDTMigrationScripts.Setup.wixproj'
+        platform: 'x86'
+        configuration: '$(BuildConfiguration)'
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: 'Installer/CustomSSDTMigrationScripts.Setup/bin/$(BuildConfiguration)'
+        Contents: '**/*.msi'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/installer'
+
+    - publish: '$(Build.ArtifactStagingDirectory)/installer'
+      displayName: 'Publish Artifact: installer'
+      artifact: 'installer'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+    - task: DotNetCoreCLI@2
+      displayName: Run Integration tests
+      inputs:
+        command: 'test'
+        projects: '**/Tests/**/CustomSSDTMigrationScripts.Unit.Tests.csproj'
+        arguments: '-c $(BuildConfiguration) --no-build'
+
+- stage: publishinternal
+  dependsOn: build
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: 'CustomSSDTMigrationScripts - Publish Internal Packages'
+  jobs:
+  - deployment: publishinternal
+    displayName: 'CustomSSDTMigrationScripts - Publish packages to internal feed'
+    environment: customssdtmigrationscripts-publish-internal
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: 'packages'
+            displayName: 'Download nuget packages'
+          - task: DotNetCoreCLI@2
+            displayName: "Publish nuget packages to internal feed"
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Agent.BuildDirectory)/packages/*.nupkg'
+              nuGetFeedType: 'internal'
+              publishVstsFeed: 'fcc0d569-a13a-4823-a1cc-7e89dbb21e2a'
+
+- stage: publishpublic
+  dependsOn: publishinternal
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'CustomSSDTMigrationScripts - Publish Public Packages'
+  jobs:
+  - deployment: publishpublic
+    displayName: 'CustomSSDTMigrationScripts - Publish packages to public feed'
+    environment: customssdtmigrationscripts-publish-public
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: 'packages'
+            displayName: 'Download nuget packages'
+          - task: DotNetCoreCLI@2
+            displayName: "Publish nuget packages to public feed"
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Agent.BuildDirectory)/packages/*.nupkg'
+              nuGetFeedType: 'external'
+              publishFeedCredentials: 'NuGet.org'

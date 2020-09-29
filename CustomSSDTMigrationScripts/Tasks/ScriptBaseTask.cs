@@ -10,7 +10,7 @@ namespace CustomSSDTMigrationScripts
     public abstract class ScriptBaseTask : Microsoft.Build.Utilities.Task
     {
         private const string SQL_SCRIPT_EXTENSION = "sql";
-        private ISettingsProvider settingsProvider = new JsonSettingsProvider();
+        private readonly ISettingsProvider settingsProvider = new JsonSettingsProvider();
         protected Settings settings;
 
         public ScriptBaseTask()
@@ -89,12 +89,20 @@ namespace CustomSSDTMigrationScripts
             {
                 case ScriptExecutionFilterMode.FILTER_BY_COUNT:
                     var filterCount = int.Parse(CurrentScriptSettings.ExecutionFilterValue);
-                    if (filterCount < 0) throw new ArgumentException($"Invalid execution filter value (count): {filterCount}");
+                    if (filterCount < 0)
+                    {
+                        throw new ArgumentException($"Invalid execution filter value (count): {filterCount}");
+                    }
+
                     scripts = scripts.OrderByDescending(s => s.OrderCriteria).Take(filterCount).ToList();
                     break;
                 case ScriptExecutionFilterMode.FILTER_BY_DAYS:
                     var filterDays = double.Parse(CurrentScriptSettings.ExecutionFilterValue);
-                    if (filterDays < 0) throw new ArgumentException($"Invalid execution filter value (days): {filterDays}");
+                    if (filterDays < 0)
+                    {
+                        throw new ArgumentException($"Invalid execution filter value (days): {filterDays}");
+                    }
+
                     scripts = scripts.Where(s => DateTime.ParseExact(s.OrderCriteria, "yyyyMMddHHmmss", CultureInfo.InvariantCulture) >= DateTime.Now.AddDays(-filterDays).Date).ToList();
                     break;
                 case ScriptExecutionFilterMode.FILTER_BY_DATE:

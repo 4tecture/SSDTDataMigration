@@ -6,9 +6,9 @@ namespace CustomSSDTMigrationScripts.Unit.Tests
     [TestClass]
     public class PostScriptTests
     {
-
         private string MsBuildExe => Context.Properties["MSBuildExe"].ToString();
-        private string SSDTTestPrjectRootDir => Context.Properties["SSDTTestPrjectRootDir"].ToString();
+
+        private string SSDTTestProjectRootDir => Context.Properties["SSDTTestProjectRootDir"].ToString();
 
         private static TestContext Context { get; set; }
 
@@ -32,7 +32,7 @@ namespace CustomSSDTMigrationScripts.Unit.Tests
         public void GetScripts_PostScripUsestDefaultSettings_ExpectAll()
         {
             // Arrange
-            var scenarioManager = new ScenarioManager(SSDTTestPrjectRootDir, MsBuildExe);
+            var scenarioManager = new ScenarioManager(SSDTTestProjectRootDir, MsBuildExe);
 
             var test = scenarioManager.Scenario1_SchemeMigrationOnly();
 

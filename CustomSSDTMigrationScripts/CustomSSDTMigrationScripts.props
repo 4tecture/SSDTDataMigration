@@ -1,14 +1,13 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  
+
   <!-- Tasks -->
-  <UsingTask TaskName="PreScriptTask" AssemblyFile="CustomSSDTMigrationScripts.dll"/>
-  <UsingTask TaskName="PostScriptTask" AssemblyFile="CustomSSDTMigrationScripts.dll"/>
-  <UsingTask TaskName="ReferenceDataScriptTask" AssemblyFile="CustomSSDTMigrationScripts.dll"/>
-  
+  <UsingTask TaskName="PreScriptTask" AssemblyFile="..\tools\CustomSSDTMigrationScripts.dll" />
+  <UsingTask TaskName="PostScriptTask" AssemblyFile="..\tools\CustomSSDTMigrationScripts.dll" />
+  <UsingTask TaskName="ReferenceDataScriptTask" AssemblyFile="..\tools\CustomSSDTMigrationScripts.dll" />
+
   <Target Name="AddCustomSSDTPreAndPostScripts" AfterTargets="BeforeBuild">
     <PreScriptTask ProjectRootDirectory="$(MSBuildProjectDirectory)" />
     <PostScriptTask ProjectRootDirectory="$(MSBuildProjectDirectory)" />
     <ReferenceDataScriptTask ProjectRootDirectory="$(MSBuildProjectDirectory)" />
   </Target>
-
 </Project>

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 
 namespace CustomSSDTMigrationScripts
 {
@@ -27,17 +27,16 @@ namespace CustomSSDTMigrationScripts
             }
             else if (settingFiles.Count() > 1)
             {
-                var error = @"JsonSettingsProvider: Multiple settting files ssdt.migration.scripts.json found under the directory {directory} (recursively)";
+                var error = $"JsonSettingsProvider: Multiple setting files ssdt.migration.scripts.json found under the directory {directory} (recursively)";
                 throw new InvalidOperationException(error);
             }
             else
             {
                 Logger.LogMessage($"JsonSettingsProvider: Found settings file {settingFiles.First()}");
                 var settingsContent = File.ReadAllText(settingFiles.First());
-                settings = JsonConvert.DeserializeObject<Settings>(settingsContent);
+                settings = JsonSerializer.Deserialize<Settings>(settingsContent);
                 Logger.LogMessage($"JsonSettingsProvider: Settings successfully deserialized.{Environment.NewLine}{settingsContent}");
             }
-
 
             return settings;
         }

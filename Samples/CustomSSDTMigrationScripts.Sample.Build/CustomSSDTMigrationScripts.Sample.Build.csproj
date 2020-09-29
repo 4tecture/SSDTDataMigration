@@ -1,0 +1,60 @@
+﻿<Project Sdk="MSBuild.Sdk.SqlProj/1.8.1">
+  
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <SqlServerVersion>Sql130</SqlServerVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="4tecture.CustomSSDTMigrationScripts" Version="1.0.1-nuget-package0042">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\CustomSSDTMigrationScripts.Sample\Functions\**\*.sql">
+      <Link>Functions\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Sample\Snapshots\**\*.sql">
+      <Link>Snapshots\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Sample\StoredProcedures\**\*.sql">
+      <Link>StoredProcedures\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Sample\Tables\**\*.sql">
+      <Link>Tables\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Sample\UserDefinedDataTypes\**\*.sql">
+      <Link>UserDefinedDataTypes\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\CustomSSDTMigrationScripts.Sample\Views\**\*.sql">
+      <Link>Views\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <None Include="..\CustomSSDTMigrationScripts.Sample\Scripts\PostScripts\**\*.sql">
+      <Link>Scripts\PostScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+    <None Include="..\CustomSSDTMigrationScripts.Sample\Scripts\PreScripts\**\*.sql">
+      <Link>Scripts\PreScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+    <None Include="..\CustomSSDTMigrationScripts.Sample\Scripts\ReferenceDataScripts\**\*.sql">
+      <Link>Scripts\ReferenceDataScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+    <None Include="..\CustomSSDTMigrationScripts.Sample\CustomSSDTMigrationScripts.Sample.refactorlog" Link="CustomSSDTMigrationScripts.Sample.refactorlog" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+    <PreDeploy Include="Scripts\Script.PreDeployment.sql" />
+    <RefactorLog Include="..\CustomSSDTMigrationScripts.Sample\CustomSSDTMigrationScripts.Sample.refactorlog" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Scripts\RunPostScriptsGenerated.sql" />
+    <Content Remove="Scripts\RunPreScriptsGenerated.sql" />
+    <Content Remove="Scripts\RunReferenceDataScriptsGenerated.sql" />
+    <Content Remove="Scripts\Script.PostDeployment.sql" />
+    <Content Remove="Scripts\Script.PreDeployment.sql" />
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace CustomSSDTMigrationScripts
 {
@@ -11,11 +11,13 @@ namespace CustomSSDTMigrationScripts
             ReferenceDataScripts = new ScriptSettings();
         }
 
-        [JsonProperty("PreScripts")]
+        [JsonPropertyName("PreScripts")]
         public ScriptSettings PreScripts { get; set; }
-        [JsonProperty("PostScripts")]
+
+        [JsonPropertyName("PostScripts")]
         public ScriptSettings PostScripts { get; set; }
-        [JsonProperty("ReferenceDataScripts")]
+
+        [JsonPropertyName("ReferenceDataScripts")]
         public ScriptSettings ReferenceDataScripts { get; set; }
     }
 }

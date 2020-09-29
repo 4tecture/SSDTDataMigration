@@ -1,5 +1,5 @@
-﻿using Microsoft.Build.Utilities;
-using System.Text;
+﻿using System.Text;
+using Microsoft.Build.Utilities;
 
 namespace CustomSSDTMigrationScripts
 {

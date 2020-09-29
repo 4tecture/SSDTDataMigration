@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*"
-           Name="Custom SSDT Migration Scripts !(bind.FileVersion.fil56EA04FF15D318BF5AF4A1A9FE8FC607)"
+           Name="Custom SSDT Migration Scripts !(bind.FileVersion.fil84945FCEFCEAA15D6BE23F57282BD221)"
            Language="1033"
-           Version="!(bind.FileVersion.fil56EA04FF15D318BF5AF4A1A9FE8FC607)"
-           Manufacturer="4tecture GmbH" 
+           Version="!(bind.FileVersion.fil84945FCEFCEAA15D6BE23F57282BD221)"
+           Manufacturer="4tecture GmbH"
            UpgradeCode="eefeb90d-3a51-4584-abd5-498f823716ad">
-    
+
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <Media Id="1" Cabinet="customSSDTMigrationScripts.cab" EmbedCab="yes" />
 
-    <Icon Id="icon.ico" SourceFile="4tecture.ico"/>
+    <Icon Id="icon.ico" SourceFile="4tecture.ico" />
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />
 
     <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
     <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
 
     <Feature Id="ProductFeature" Title="CustomSSDTMigrationScripts.Setup" Level="1">
-      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="ProductBuildComponents" />
+      <ComponentGroupRef Id="ProductToolsComponents" />
     </Feature>
 
     <UI Id="UserInterface">
@@ -40,7 +41,6 @@
 
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
       <Publish Dialog="WelcomeDlg" Control="Next" Event="EndDialog" Value="Return" Order="2"></Publish>
-
     </UI>
     <UIRef Id="WixUI_Common" />
   </Product>
@@ -50,21 +50,21 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
         <Directory Id="MSBUILDFOLDER" Name="MSBuild">
-          <Directory Id="INSTALLFOLDER" Name="4tecture" />
+          <Directory Id="INSTALLFOLDER" Name="4tecture">
+            <Directory Id="BUILD" Name="build" />
+            <Directory Id="TOOLS" Name="tools" />
+          </Directory>
         </Directory>
       </Directory>
     </Directory>
 
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="cmp4F85E36BA4746D3C394CDAAA7CE07C9C" Guid="*">
-        <File Id="fil56EA04FF15D318BF5AF4A1A9FE8FC607" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\CustomSSDTMigrationScripts.dll" />
-      </Component>
+    <ComponentGroup Id="ProductBuildComponents" Directory="BUILD">
       <Component Id="cmp774A2AD939D243C9802A333720E42D8A" Guid="*">
         <File Id="fil46FBAD698A452030E313928987D44B71" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\CustomSSDTMigrationScripts.props" />
       </Component>
-      <Component Id="cmp374A2AD939D243C9802A333720E42D8A" Guid="*">
-        <File Id="fil374A2AD939D243C9802A333720E42D8A" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\Newtonsoft.Json.dll" />
-      </Component>
-		</ComponentGroup>
-	</Fragment>
+    </ComponentGroup>
+    <ComponentGroup Id="ProductToolsComponents" Directory="TOOLS">
+      <ComponentGroupRef Id="CustomSSDTMigrationScripts" />
+    </ComponentGroup>
+  </Fragment>
 </Wix>

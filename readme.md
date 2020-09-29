@@ -47,6 +47,7 @@ Use the sampels project from the *Sample* folder as the initial template project
         |-Script.PreDeployment.sql (Build Action = PreDeploy)
     |-Tables
         |-_MigrationScriptsHistory.sql (Build Action = Build)
+    |-Scripts.targets
     ```
     - The migration scripts history table (*_MigrationScriptsHistory.sql*) is mandatory and must be setup with the following data definition language template:
         ```sql
@@ -67,17 +68,23 @@ Use the sampels project from the *Sample* folder as the initial template project
         :r .\RunReferenceDataScriptsGenerated.sql
         :r .\RunPostScriptsGenerated.sql
         ```
+    - The project targets  (*Scripts.targets*) must be initialized as followed:
+        ```xml
+        <?xml version="1.0" encoding="utf-8"?>
+        <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+          <Import Project="$(MSBuildExtensionsPath)\4tecture\build\CustomSSDTMigrationScripts.props" Condition="Exists('$(MSBuildExtensionsPath)\4tecture\build\CustomSSDTMigrationScripts.props')" />
+        </Project>
+        ```
 
-4. Open the .sqlproj project file in a text editor and add the following project import statement .props within the projects root element:
+3. Open the .sqlproj project file in a text editor and add the following project import statement for the targets file within the projects root element:
 
     ```xml
     <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-
-    <Import Project="$(MSBuildExtensionsPath)\4tecture\CustomSSDTMigrationScripts.props" />
-        
+        <Import Project=".\Scripts.targets" />
+        ...
     </Project>
     ```  
-5. Rebuild your SSDT project and verify if the following files have been generated within the Script subfolder:
+4. Rebuild your SSDT project and verify if the following files have been generated within the Script subfolder:
 
     - RunPostScriptsGenerated.sql
     - RunPreScriptsGenerated.sql

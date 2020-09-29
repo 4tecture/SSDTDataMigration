@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomSSDTMigrationScripts", "CustomSSDTMigrationScripts\CustomSSDTMigrationScripts.csproj", "{0032D2D5-1950-4A66-8C07-0CD222EA5968}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomSSDTMigrationScripts", "CustomSSDTMigrationScripts\CustomSSDTMigrationScripts.csproj", "{0032D2D5-1950-4A66-8C07-0CD222EA5968}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{52EDF0A7-8D5D-4AA4-BB4D-215A1B77EA61}"
 EndProject
@@ -13,11 +13,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B9394FD1
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CustomSSDTMigrationScripts.Integration.Tests", "Tests\CustomSSDTMigrationScripts.Integration.Tests\CustomSSDTMigrationScripts.Integration.Tests.sqlproj", "{EAC8CD49-8002-4C64-BE16-36D4F67F3165}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomSSDTMigrationScripts.Unit.Tests", "Tests\CustomSSDTMigrationScripts.Unit.Tests\CustomSSDTMigrationScripts.Unit.Tests.csproj", "{844A4571-2BEB-4E93-A30E-A26F7EDFB8B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomSSDTMigrationScripts.Unit.Tests", "Tests\CustomSSDTMigrationScripts.Unit.Tests\CustomSSDTMigrationScripts.Unit.Tests.csproj", "{844A4571-2BEB-4E93-A30E-A26F7EDFB8B3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{1460C9A8-3876-4F33-846B-3F81748E302F}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CustomSSDTMigrationScripts.Sample", "Samples\CustomSSDTMigrationScripts.Sample\CustomSSDTMigrationScripts.Sample.sqlproj", "{75B16C31-4EE5-4D1A-A40D-76CF72E64292}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomSSDTMigrationScripts.Integration.Tests.Build", "Tests\CustomSSDTMigrationScripts.Integration.Tests.Build\CustomSSDTMigrationScripts.Integration.Tests.Build.csproj", "{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomSSDTMigrationScripts.Sample.Build", "Samples\CustomSSDTMigrationScripts.Sample.Build\CustomSSDTMigrationScripts.Sample.Build.csproj", "{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{E0E828E9-1D18-44FA-8804-36AB5F04001B}"
+	ProjectSection(SolutionItems) = preProject
+		pipelines\azure-pipelines.yml = pipelines\azure-pipelines.yml
+		GitVersion.yml = GitVersion.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{349FCD23-FBAA-4F48-93B5-B77E27F0640D}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +91,22 @@ Global
 		{75B16C31-4EE5-4D1A-A40D-76CF72E64292}.Release|x86.ActiveCfg = Release|Any CPU
 		{75B16C31-4EE5-4D1A-A40D-76CF72E64292}.Release|x86.Build.0 = Release|Any CPU
 		{75B16C31-4EE5-4D1A-A40D-76CF72E64292}.Release|x86.Deploy.0 = Release|Any CPU
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}.Debug|x86.Build.0 = Debug|Any CPU
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}.Release|x86.ActiveCfg = Release|Any CPU
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F}.Release|x86.Build.0 = Release|Any CPU
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}.Debug|x86.Build.0 = Debug|Any CPU
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}.Release|x86.ActiveCfg = Release|Any CPU
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +116,8 @@ Global
 		{EAC8CD49-8002-4C64-BE16-36D4F67F3165} = {B9394FD1-3AC2-46FF-9869-DCC3CBB0FFCB}
 		{844A4571-2BEB-4E93-A30E-A26F7EDFB8B3} = {B9394FD1-3AC2-46FF-9869-DCC3CBB0FFCB}
 		{75B16C31-4EE5-4D1A-A40D-76CF72E64292} = {1460C9A8-3876-4F33-846B-3F81748E302F}
+		{EBDAAAF5-E3E0-4A13-AE41-04C97058738F} = {B9394FD1-3AC2-46FF-9869-DCC3CBB0FFCB}
+		{71DE3775-A4E7-470F-A92F-3B60EAD50ECB} = {1460C9A8-3876-4F33-846B-3F81748E302F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39483C7A-48D1-4F75-A38D-C97BE283BE78}

@@ -1,9 +1,9 @@
-﻿using CustomSSDTMigrationScripts.Unit.Tests.TestUtils;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CustomSSDTMigrationScripts.Unit.Tests.TestUtils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
 {
@@ -11,7 +11,7 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
     public class BaseTaskTests
     {
         public string TempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        private ScriptSamples sampels = new ScriptSamples();
+        private readonly ScriptSamples sampels = new ScriptSamples();
 
         [TestInitialize]
         public void TestInitialize()
@@ -342,13 +342,19 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
         private void CreateSampleScripts(string dir, List<string> sampleFiles)
         {
             // Cleanup and recreate sample files
-            if (Directory.Exists(dir)) Directory.Delete(dir, true);
+            if (Directory.Exists(dir))
+            {
+                Directory.Delete(dir, true);
+            }
 
             sampleFiles.ForEach(f =>
             {
                 FileInfo fi = new FileInfo(Path.Combine(dir, f));
                 if (!fi.Directory.Exists)
+                {
                     fi.Directory.Create();
+                }
+
                 using (var fileStream = fi.Create())
                 {
                 }

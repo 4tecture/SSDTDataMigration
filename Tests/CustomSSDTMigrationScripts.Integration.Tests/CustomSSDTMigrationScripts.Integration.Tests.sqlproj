@@ -18,12 +18,13 @@
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetLanguage>CS</TargetLanguage>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -78,6 +79,7 @@
     <None Include="Views\.gitkeep" />
     <None Include="StoredProcedures\.gitkeep" />
     <None Include="Tables\.gitkeep" />
+    <None Include="Scripts.targets" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\RunPreScriptsGenerated.sql" />
@@ -96,5 +98,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\Product.sql" />
+    <Build Include="Tables\Customer.sql" />
+    <Build Include="Tables\Order.sql" />
   </ItemGroup>
 </Project>
