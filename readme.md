@@ -19,18 +19,20 @@ The following illustration shows the basic deployment flow using SSDT and the sc
 
 ![alt text](Docs/Images/DeploymentProcessFlow.png "Deployment PRocess Flow")
 
+## Build (and publish) a .dacpac (SQL Server database project) with .NET Core
+The cross-platform version of sqlpackage allows publishing a .dacpac package for quite some time. Though building the database project (.sqlproj) was only possible on Windows because the .sqlproj project file is based on the full .NET Framework. The [MSBuild.Sdk.SqlProj](https://github.com/rr-wfm/MSBuild.Sdk.SqlProj) project finally allows to build the .dacpac file also on Mac or Linux.
+
 ## Getting started
 These instructions will get you a sample of the SSDT project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 This chapter lists all prerequisites which have to be met to run the extension locally or on build servers.
- - Install **SQL Server Data Tools**  Visual Studio component (*Visual Studio Installer | Modify | Individual Components | Cloud, database and server | SQL Server Data Tools*)
- - Install **4tecture.CustomSSDTMigrationScripts.msi** extension from the releases section.
+- Install **SQL Server Data Tools**  Visual Studio component (*Visual Studio Installer | Modify | Individual Components | Cloud, database and server | SQL Server Data Tools*)
+- Install **4tecture.CustomSSDTMigrationScripts.msi** extension from the releases section.
 
-
-### Setup Sample
-Use the sampels project from the *Sample* folder as the initial template project or follow these instructions (using default configuration settings):
-1. Create a new SQL Server Database project (*New Project... | Other Languages | SDQL Server*)
+### Setup Sample - SQL Server Database project
+Use the samples project ending with "*.Sample" from the *Sample* folder as the initial template project or follow these instructions (using default configuration settings):
+1. Create a new SQL Server Database project
 2. On the root level of the project create the following folder structure and files with the given build option:
     ```
     |-Scripts
@@ -88,6 +90,128 @@ Use the sampels project from the *Sample* folder as the initial template project
 
     - RunPostScriptsGenerated.sql
     - RunPreScriptsGenerated.sql
+    - RunReferenceDataScriptsGenerated.sql
+
+### Setup Sample - Add a cross-platform .dacpac build project to an existing solution with an existing SQL Server Database project
+Use the sample project ending with ".Sample.Build" from the *Sample* folder as the initial template project or follow these instructions (using the default configuration settings):
+
+1. Create .NET Standard Class Library
+2. Open the .csproj file and change the Sdk value and define the [SQL Server target](https://docs.microsoft.com/dotnet/api/microsoft.sqlserver.dac.model.sqlserverversion):
+    ```xml
+    <Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+    ```
+    to
+    ```xml
+    <Project Sdk="MSBuild.Sdk.SqlProj/1.9.0">
+    
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <SqlServerVersion>Sql130</SqlServerVersion>
+    </PropertyGroup>
+    ```
+3. Add the nuget package reference to add the Custom SSDT extension
+    ```xml
+    <ItemGroup>
+        <PackageReference Include="4tecture.CustomSSDTMigrationScripts" Version="1.2.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    ```
+
+4. On the root level of the project create the following folder structure and files:
+    ```
+    |-Scripts
+        |-PostScripts (folder)
+            |-.gitkeep (empty file to let git know to keep the empty folder)
+        |-PreScripts (folder)
+            |-.gitkeep (empty file to let git know to keep the empty folder)
+        |-ReferenceDataScripts (folder)
+            |-.gitkeep (empty file to let git know to keep the empty folder)
+        |-Script.PostDeployment.sql
+        |-Script.PreDeployment.sql
+    ```
+    - The SQL pre-script (*Script.PreDeployment.sql*) must be setup as follow:
+        ```sql
+        :r .\RunPreScriptsGenerated.sql
+        ``` 
+    - The SQL post.script (*Script.PostDeployment.sql*) must be initialized as followed:
+        ```sql
+        :r .\RunReferenceDataScriptsGenerated.sql
+        :r .\RunPostScriptsGenerated.sql
+        ```
+5. Add a link in the new .csproj to the .sql scripts in your existing database project
+    ```xml
+    <ItemGroup>
+        <Content Include="{Relativ-SQL-Server-Database-Project-Path}\Functions\**\*.sql">
+            <Link>Functions\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Content>
+        <Content Include="{Relativ-SQL-Server-Database-Project-Path}\Snapshots\**\*.sql">
+            <Link>Snapshots\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Content>
+        <Content Include="{Relativ-SQL-Server-Database-Project-Path}\StoredProcedures\**\*.sql">
+            <Link>StoredProcedures\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Content>
+        <Content Include="{Relativ-SQL-Server-Database-Project-Path}\Tables\**\*.sql">
+            <Link>Tables\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Content>
+        <Content Include="{Relativ-SQL-Server-Database-Project-Path}\UserDefinedDataTypes\**\*.sql">
+            <Link>UserDefinedDataTypes\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Content>
+        <Content Include="{Relativ-SQL-Server-Database-Project-Path}\Views\**\*.sql">
+            <Link>Views\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Content>
+        <None Include="{Relativ-SQL-Server-Database-Project-Path}\Scripts\PostScripts\**\*.sql">
+            <Link>Scripts\PostScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </None>
+        <None Include="{Relativ-SQL-Server-Database-Project-Path}\Scripts\PreScripts\**\*.sql">
+            <Link>Scripts\PreScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </None>
+        <None Include="{Relativ-SQL-Server-Database-Project-Path}\Scripts\ReferenceDataScripts\**\*.sql">
+            <Link>Scripts\ReferenceDataScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </None>
+        <None Include="{Relativ-SQL-Server-Database-Project-Path}\{SQL-Server-Database-Project}.refactorlog" Link="{SQL-Server-Database-Project}.refactorlog" />
+    </ItemGroup>
+    ```
+
+6. Define the actions to the created script files, link and use the source .refactorlog:
+    ```xml
+    <ItemGroup>
+        <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+        <PreDeploy Include="Scripts\Script.PreDeployment.sql" />
+        <RefactorLog Include="{Relativ-SQL-Server-Database-Project-Path}\{SQL-Server-Database-Project}.refactorlog" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Remove="Scripts\RunPostScriptsGenerated.sql" />
+        <Content Remove="Scripts\RunPreScriptsGenerated.sql" />
+        <Content Remove="Scripts\RunReferenceDataScriptsGenerated.sql" />
+        <Content Remove="Scripts\Script.PostDeployment.sql" />
+        <Content Remove="Scripts\Script.PreDeployment.sql" />
+    </ItemGroup>
+    ```
+
+7. Rebuild your .Net Standard Class Library project and verify if the following files have been generated within the Script subfolder:
+
+    - RunPostScriptsGenerated.sql
+    - RunPreScriptsGenerated.sql
+    - RunReferenceDataScriptsGenerated.sql
+
+### Extend .gitignore
+It's recommended to add the auto-generated files to the git ignore file:
+```
+    {SQL-Server-Database-Project-Path}/Scripts/RunReferenceDataScriptsGenerated.sql
+    {SQL-Server-Database-Project-Path}/Scripts/RunPreScriptsGenerated.sql
+    {SQL-Server-Database-Project-Path}/Scripts/RunPostScriptsGenerated.sql
+
+    {Net-Standard-Project-Path}/Scripts/RunReferenceDataScriptsGenerated.sql
+    {Net-Standard-Project-Path}/Scripts/RunPreScriptsGenerated.sql
+    {Net-Standard-Project-Path}/Scripts/RunPostScriptsGenerated.sql
+```
 
 ## Configuration
 The extension can be easily adapted to your needs by using a json configuration file. The configuration file must be placed beside the SSDT project file named **ssdt.migration.scripts.json** The following snipped shows all available options where each of the supported script type can be individually configured.
