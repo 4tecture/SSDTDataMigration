@@ -69,9 +69,15 @@ namespace CustomSSDTMigrationScripts
                 return scripts;
             }
 
-            sqlScripts = Directory.GetFiles(CurrentScriptSettings.ScriptBaseDirectory, $"*.{SQL_SCRIPT_EXTENSION}", scriptSearchOption)
-                .Select(s => new FileInfo(s)).ToList();
-            Logger.LogMessage($"Found total {sqlScripts.Count} sql scripts. Start validating and filtering scripts...");
+            sqlScripts = Directory.GetFiles(CurrentScriptSettings.ScriptBaseDirectory, $"*.{SQL_SCRIPT_EXTENSION}", scriptSearchOption).Select(s => new FileInfo(s)).ToList();
+            if (sqlScripts.Any())
+            {
+                Logger.LogMessage($"Found total {sqlScripts.Count} sql scripts. Start validating and filtering scripts...");
+            }
+            else
+            {
+                Logger.LogWarning($"Found no sql scripts in {CurrentScriptSettings.ScriptBaseDirectory}.");
+            }
 
             // Validate by naming pattern
             sqlScripts = FilterScriptsByNamingPattern(sqlScripts);

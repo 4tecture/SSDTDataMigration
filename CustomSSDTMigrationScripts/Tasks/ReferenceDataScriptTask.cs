@@ -107,7 +107,7 @@ BEGIN CATCH
            @ErrorSeverity = ERROR_SEVERITY(),
            @ErrorState = ERROR_STATE();
 
-	-- Rollback all transactions if any of the {ScriptTypeName} scripts failed.
+    -- Rollback all transactions if any of the {ScriptTypeName} scripts failed.
     IF @@TRANCOUNT > 0  
         ROLLBACK TRANSACTION;
 
