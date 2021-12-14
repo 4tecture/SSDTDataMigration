@@ -14,11 +14,6 @@ pool:
 variables:
   BuildConfiguration: Release
 
-resources:
-  containers:
-  - container: buildagent
-    image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
-
 stages:
 - stage: build
   displayName: 'CustomSSDTMigrationScripts - Build the Framework'
@@ -29,24 +24,15 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
-        version: '5.x'
-
-    - pwsh: |
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri "https://github.com/4tecture/SSDTDataMigration/releases/download/untagged-8c8c5eae85e1f1e33b69/4tecture.CustomSSDTMigrationScripts.msi" -OutFile "$(agent.tempdirectory)\4tecture.CustomSSDTMigrationScripts.msi"
-
-        msiexec /i "$(agent.tempdirectory)\4tecture.CustomSSDTMigrationScripts.msi" /qn /norestart
-      displayName: 'Install Custom SSDT Extension'
+        version: '6.x'
 
     - task: BuildVersioning@0
       displayName: 'Build Versioning'
-      target: host
       inputs:
         versionSource: 'gitversion'
         doInstallGitVersion: true
-        GitVersionInstallerSource: 'nuget'
-        GitVersionInstallerVersion: '5.0.1'
-        doUseLatestGitVersionInstallerVersion: false
+        GitVersionToolInstallation: 'global'
+        doUseLatestGitVersionInstallerVersion: true
         paramAssemblyVersion: '7'
         paramAssemblyFileVersion: '7'
         paramAssemblyInformationalVersion: '6'
@@ -86,20 +72,23 @@ stages:
         command: 'restore'
         projects: |
           **/CustomSSDTMigrationScripts.csproj
-          **/Tests/**/CustomSSDTMigrationScripts.Unit.Tests.csproj
+          **/CustomSSDTMigrationScripts.Sample.csproj
+          **/CustomSSDTMigrationScripts.Sample.Build.csproj
+          **/CustomSSDTMigrationScripts.Integration.Tests.csproj
+          **/CustomSSDTMigrationScripts.Integration.Tests.Build.csproj
+          **/CustomSSDTMigrationScripts.Unit.Tests.csproj
         feedsToUse: 'select'
 
     - task: DotNetCoreCLI@2
-      displayName: 'Build solution'
+      displayName: 'Build CustomSSDTMigrationScripts'
       inputs:
         command: 'build'
         projects: |
           **/CustomSSDTMigrationScripts.csproj
-          **/Tests/**/CustomSSDTMigrationScripts.Unit.Tests.csproj
         arguments: '-c $(BuildConfiguration) --no-restore'
 
     - task: DotNetCoreCLI@2
-      displayName: 'Create nuget packages'
+      displayName: 'Create nuget package'
       inputs:
         command: 'pack'
         packagesToPack: '**/CustomSSDTMigrationScripts.csproj'
@@ -121,13 +110,28 @@ stages:
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
     - task: VSBuild@1
-      displayName: 'Build installer'
+      displayName: 'Build installer x86'
       inputs:
         solution: 'Installer/CustomSSDTMigrationScripts.Setup/CustomSSDTMigrationScripts.Setup.wixproj'
         platform: 'x86'
         configuration: '$(BuildConfiguration)'
 
     - task: CopyFiles@2
+      displayName: 'Copy installer x68'
+      inputs:
+        SourceFolder: 'Installer/CustomSSDTMigrationScripts.Setup/bin/$(BuildConfiguration)'
+        Contents: '**/*.msi'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/installer'
+
+    - task: VSBuild@1
+      displayName: 'Build installer x64'
+      inputs:
+        solution: 'Installer/CustomSSDTMigrationScripts.Setup/CustomSSDTMigrationScripts.Setup.wixproj'
+        platform: 'x64'
+        configuration: '$(BuildConfiguration)'
+
+    - task: CopyFiles@2
+      displayName: 'Copy installer x64'
       inputs:
         SourceFolder: 'Installer/CustomSSDTMigrationScripts.Setup/bin/$(BuildConfiguration)'
         Contents: '**/*.msi'
@@ -138,11 +142,29 @@ stages:
       artifact: 'installer'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
+    - pwsh: |
+       
+        msiexec /i "$(Build.ArtifactStagingDirectory)\installer\4tecture.CustomSSDTMigrationScripts.x86.msi" /qn /norestart
+        msiexec /i "$(Build.ArtifactStagingDirectory)\installer\4tecture.CustomSSDTMigrationScripts.x64.msi" /qn /norestart
+      displayName: 'Install Custom SSDT Extension'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build CustomSSDTMigrationScripts'
+      inputs:
+        command: 'build'
+        projects: |
+          **/CustomSSDTMigrationScripts.Sample.csproj
+          **/CustomSSDTMigrationScripts.Sample.Build.csproj
+          **/CustomSSDTMigrationScripts.Integration.Tests.csproj
+          **/CustomSSDTMigrationScripts.Integration.Tests.Build.csproj
+          **/CustomSSDTMigrationScripts.Unit.Tests.csproj
+        arguments: '-c $(BuildConfiguration) --no-restore'
+
     - task: DotNetCoreCLI@2
       displayName: Run Integration tests
       inputs:
         command: 'test'
-        projects: '**/Tests/**/CustomSSDTMigrationScripts.Unit.Tests.csproj'
+        projects: '**/CustomSSDTMigrationScripts.Unit.Tests.csproj'
         arguments: '-c $(BuildConfiguration) --no-build'
 
 - stage: publishinternal

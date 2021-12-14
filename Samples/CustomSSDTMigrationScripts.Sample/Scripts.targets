@@ -4,5 +4,5 @@
     <Message Text="Deleting $(ProjectDir)Scripts\Run*Generated.sql" />
     <Delete Files="$(ProjectDir)Scripts\Run*Generated.sql" />
   </Target>
-  <Import Project="$(MSBuildExtensionsPath)\4tecture\build\CustomSSDTMigrationScripts.props" Condition="Exists('$(MSBuildExtensionsPath)\4tecture\build\CustomSSDTMigrationScripts.props')" />
+  <Import Project="$(MSBuildExtensionsPath64)\4tecture\build\CustomSSDTMigrationScripts.props" Condition="Exists('$(MSBuildExtensionsPath64)\4tecture\build\CustomSSDTMigrationScripts.props')" />
 </Project>

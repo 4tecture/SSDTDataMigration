@@ -1,78 +1,99 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <?if $(var.Platform) = x64 ?>
+        <?define Win64 = "yes" ?>
+    <?else ?>
+        <?define Win64 = "no" ?>
+    <?endif ?>
+    
     <Fragment>
         <DirectoryRef Id="TOOLS" />
     </Fragment>
     <Fragment>
         <ComponentGroup Id="CustomSSDTMigrationScripts">
-            <Component Id="cmp1BAA81C5E4DC17A618987B903C7668B6" Directory="TOOLS" Guid="{938E5322-AA93-4498-899B-A9E9160FA6E1}">
-                <File Id="filBB7942E7737C4D8C8F5F100C0EB519AF" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\CustomSSDTMigrationScripts.deps.json" />
+            <Component Id="cmp1BAA81C5E4DC17A618987B903C7668B6" Directory="TOOLS" Guid="{938E5322-AA93-4498-899B-A9E9160FA6E1}" Win64="$(var.Win64)">
+                <File Id="filBB7942E7737C4D8C8F5F100C0EB519AF" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)CustomSSDTMigrationScripts.deps.json" />
             </Component>
-            <Component Id="cmp00BF9C01E607AEB9D3AAB4F4A8B3F215" Directory="TOOLS" Guid="{D10AB24E-4E51-4E8C-AD7B-087204FF8F6F}">
-                <File Id="fil84945FCEFCEAA15D6BE23F57282BD221" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\CustomSSDTMigrationScripts.dll" />
+            <Component Id="cmp00BF9C01E607AEB9D3AAB4F4A8B3F215" Directory="TOOLS" Guid="{D10AB24E-4E51-4E8C-AD7B-087204FF8F6F}" Win64="$(var.Win64)">
+                <File Id="fil84945FCEFCEAA15D6BE23F57282BD221" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)CustomSSDTMigrationScripts.dll" />
             </Component>
-            <Component Id="cmp907FA5A4F9B33631F370B834F7A8849E" Directory="TOOLS" Guid="{014EE6A5-DF58-4972-A073-E8B04DF6CF69}">
-                <File Id="filA5F6656E01FF1D3B43FDA0442AD000FB" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\Microsoft.Bcl.AsyncInterfaces.dll" />
+            <Component Id="cmp907FA5A4F9B33631F370B834F7A8849E" Directory="TOOLS" Guid="{014EE6A5-DF58-4972-A073-E8B04DF6CF69}" Win64="$(var.Win64)">
+                <File Id="filA5F6656E01FF1D3B43FDA0442AD000FB" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)Microsoft.Bcl.AsyncInterfaces.dll" />
             </Component>
-            <Component Id="cmpB8A396D25F9473C4E51F048C5C2FB468" Directory="TOOLS" Guid="{F33E3C66-98AC-4120-9796-A0D381F5935D}">
-                <File Id="fil281BF7A33A88EBCE63158A03AD62EF4F" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\Microsoft.Build.Framework.dll" />
+            <Component Id="cmpB8A396D25F9473C4E51F048C5C2FB468" Directory="TOOLS" Guid="{F33E3C66-98AC-4120-9796-A0D381F5935D}" Win64="$(var.Win64)">
+                <File Id="fil281BF7A33A88EBCE63158A03AD62EF4F" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)Microsoft.Build.Framework.dll" />
             </Component>
-            <Component Id="cmp09901FE811DE1C3C8FB19A3533D2994B" Directory="TOOLS" Guid="{A1CC74F9-0726-49A6-A3F2-961697BA77E3}">
-                <File Id="fil54E9AA6838FCF80154F5A6316F626653" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\Microsoft.Build.Tasks.Core.dll" />
+            <Component Id="cmp09901FE811DE1C3C8FB19A3533D2994B" Directory="TOOLS" Guid="{A1CC74F9-0726-49A6-A3F2-961697BA77E3}" Win64="$(var.Win64)">
+                <File Id="fil54E9AA6838FCF80154F5A6316F626653" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)Microsoft.Build.Tasks.Core.dll" />
             </Component>
-            <Component Id="cmp6706321C138898CF07151A130EE25D6F" Directory="TOOLS" Guid="{A1B48396-2F2F-4758-B661-C817B4D868D1}">
-                <File Id="filB9B145200744A22AE29A49B92E6E0015" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\Microsoft.Build.Utilities.Core.dll" />
+            <Component Id="cmp6706321C138898CF07151A130EE25D6F" Directory="TOOLS" Guid="{A1B48396-2F2F-4758-B661-C817B4D868D1}" Win64="$(var.Win64)">
+                <File Id="filB9B145200744A22AE29A49B92E6E0015" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)Microsoft.Build.Utilities.Core.dll" />
             </Component>
-            <Component Id="cmp548F6F879D26EFF4B3411290E96AD461" Directory="TOOLS" Guid="{E6A841FE-7715-4FDA-A8A1-091BC9E8D8D0}">
-                <File Id="fil9CEE287E8616F0B347A3828B9E7730A5" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Buffers.dll" />
+            <Component Id="cmp40FCC84EA43A821C271C520331DEDA15" Directory="TOOLS" Guid="{64B45F1D-A82A-4824-943A-E1498047292D}" Win64="$(var.Win64)">
+                <File Id="fil04BFF15F52DCD611C1685FD0CF72EFAC" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)Microsoft.NET.StringTools.dll" />
             </Component>
-            <Component Id="cmp2564834D965807FFD9890E05540F5F1A" Directory="TOOLS" Guid="{E563D620-C545-4123-959A-915C4ADEE996}">
-                <File Id="filB45FBFA62B248450C3296A07084EDA8B" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.CodeDom.dll" />
+            <Component Id="cmp548F6F879D26EFF4B3411290E96AD461" Directory="TOOLS" Guid="{E6A841FE-7715-4FDA-A8A1-091BC9E8D8D0}" Win64="$(var.Win64)">
+                <File Id="fil9CEE287E8616F0B347A3828B9E7730A5" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Buffers.dll" />
             </Component>
-            <Component Id="cmp30D528F65A4E661D19BDF75FC76179EE" Directory="TOOLS" Guid="{7574122E-A74E-415D-9265-2204E6D33A65}">
-                <File Id="fil8F552D5B21F6C95C8C4711AB614BAAFE" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Collections.Immutable.dll" />
+            <Component Id="cmp2564834D965807FFD9890E05540F5F1A" Directory="TOOLS" Guid="{E563D620-C545-4123-959A-915C4ADEE996}" Win64="$(var.Win64)">
+                <File Id="filB45FBFA62B248450C3296A07084EDA8B" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.CodeDom.dll" />
             </Component>
-            <Component Id="cmpCE02EB9E50D512817FC9D310BE0272FC" Directory="TOOLS" Guid="{F3DDBCE7-1A6A-43C1-93EC-B586F9DC68AC}">
-                <File Id="fil50FBCF0735518A0A26AC7237457B7636" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Memory.dll" />
+            <Component Id="cmp30D528F65A4E661D19BDF75FC76179EE" Directory="TOOLS" Guid="{7574122E-A74E-415D-9265-2204E6D33A65}" Win64="$(var.Win64)">
+                <File Id="fil8F552D5B21F6C95C8C4711AB614BAAFE" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Collections.Immutable.dll" />
             </Component>
-            <Component Id="cmpE3E6F66C03CE92E59F3AC7CC75B25622" Directory="TOOLS" Guid="{3DBFFD1B-CE74-4031-A89D-21D621FB3AB3}">
-                <File Id="filD58D5C81D6766230591E68C9170B6C4D" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Numerics.Vectors.dll" />
+            <Component Id="cmp8333F90C9BE08CF626911539C4ABAA6B" Directory="TOOLS" Guid="{2B06B041-DCC1-4D98-A4E5-641959775367}" Win64="$(var.Win64)">
+                <File Id="fil6D8972815490548E0B46589E7D29F2BF" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Configuration.ConfigurationManager.dll" />
             </Component>
-            <Component Id="cmp54016BB3FB65D9CD82225D91692D19AA" Directory="TOOLS" Guid="{B7F10110-2196-403B-B84F-308F4B9802AD}">
-                <File Id="fil94A5F29F045039489D5A36ACD747EC59" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Reflection.Metadata.dll" />
+            <Component Id="cmpCE02EB9E50D512817FC9D310BE0272FC" Directory="TOOLS" Guid="{F3DDBCE7-1A6A-43C1-93EC-B586F9DC68AC}" Win64="$(var.Win64)">
+                <File Id="fil50FBCF0735518A0A26AC7237457B7636" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Memory.dll" />
             </Component>
-            <Component Id="cmp1DC51AA416F26FF219CA1610905DFC8D" Directory="TOOLS" Guid="{2BA6972B-E494-437C-8F6D-CD11DB1D2F16}">
-                <File Id="filEC7EC1870611072A0873FD343F16A042" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Reflection.TypeExtensions.dll" />
+            <Component Id="cmpE3E6F66C03CE92E59F3AC7CC75B25622" Directory="TOOLS" Guid="{3DBFFD1B-CE74-4031-A89D-21D621FB3AB3}" Win64="$(var.Win64)">
+                <File Id="filD58D5C81D6766230591E68C9170B6C4D" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Numerics.Vectors.dll" />
             </Component>
-            <Component Id="cmpB81C6D16DBA313C11AB3C4C27A34B2A9" Directory="TOOLS" Guid="{F52EEEAA-F853-42A3-80FC-0B29BEC8D436}">
-                <File Id="fil3459F1B59AA0E9ABEA5EF7311DDA8A60" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Resources.Extensions.dll" />
+            <Component Id="cmp54016BB3FB65D9CD82225D91692D19AA" Directory="TOOLS" Guid="{B7F10110-2196-403B-B84F-308F4B9802AD}" Win64="$(var.Win64)">
+                <File Id="fil94A5F29F045039489D5A36ACD747EC59" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Reflection.Metadata.dll" />
             </Component>
-            <Component Id="cmp94A77140FB1180238959A6303893B6F9" Directory="TOOLS" Guid="{61CD5F5B-7740-4A4E-BE4F-9F731DC20FD0}">
-                <File Id="filE6A07193254B07E8C2E3AFD82D4BF5F0" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Runtime.CompilerServices.Unsafe.dll" />
+            <Component Id="cmpB81C6D16DBA313C11AB3C4C27A34B2A9" Directory="TOOLS" Guid="{F52EEEAA-F853-42A3-80FC-0B29BEC8D436}" Win64="$(var.Win64)">
+                <File Id="fil3459F1B59AA0E9ABEA5EF7311DDA8A60" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Resources.Extensions.dll" />
             </Component>
-            <Component Id="cmpE4365AD5DDF588BF682B2F5416FCB25D" Directory="TOOLS" Guid="{DEC0CF23-387E-4FEA-85FA-70A03947F1AB}">
-                <File Id="filE0318B45F415BAD72D7911522D99DC37" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Security.AccessControl.dll" />
+            <Component Id="cmp94A77140FB1180238959A6303893B6F9" Directory="TOOLS" Guid="{61CD5F5B-7740-4A4E-BE4F-9F731DC20FD0}" Win64="$(var.Win64)">
+                <File Id="filE6A07193254B07E8C2E3AFD82D4BF5F0" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Runtime.CompilerServices.Unsafe.dll" />
             </Component>
-            <Component Id="cmp33C808E4B6F5317E5B43093B693B4BF5" Directory="TOOLS" Guid="{C5F6147D-B4FD-4C57-A511-662ADC5F12BB}">
-                <File Id="fil62B35DD8DAD8DEA3778753C0437B5423" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Security.Permissions.dll" />
+            <Component Id="cmpE4365AD5DDF588BF682B2F5416FCB25D" Directory="TOOLS" Guid="{DEC0CF23-387E-4FEA-85FA-70A03947F1AB}" Win64="$(var.Win64)">
+                <File Id="filE0318B45F415BAD72D7911522D99DC37" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Security.AccessControl.dll" />
             </Component>
-            <Component Id="cmpBF49858C1CB032A94C67BA0DE7475A2F" Directory="TOOLS" Guid="{93CC3AB4-0786-495E-8D0C-E110441BFA6A}">
-                <File Id="fil4A6B1F17CFF22188E3A1EA72BD12C0B6" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Security.Principal.Windows.dll" />
+            <Component Id="cmp17ACD36AA7525ED2D97928DFE5E2BE25" Directory="TOOLS" Guid="{A4DAB540-01E7-4C82-AE45-8CAC851DE964}" Win64="$(var.Win64)">
+                <File Id="fil344DD56BD7139717EAE311CF65ED6F02" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Security.Cryptography.Cng.dll" />
             </Component>
-            <Component Id="cmp45DDE6E16F1C56AD5B8717CC78288799" Directory="TOOLS" Guid="{BD192DB2-109E-4220-99F6-0CABF1F1F73A}">
-                <File Id="fil48940337F2976A6920F3B2B5CED178A9" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Text.Encodings.Web.dll" />
+            <Component Id="cmp6EABB4E254E327A37214EF89EC94A572" Directory="TOOLS" Guid="{6BAD093F-2C83-415F-B65A-96681E9DD7C1}" Win64="$(var.Win64)">
+                <File Id="fil0E50ECCB43661CDABCD0B91BCE07E1C7" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Security.Cryptography.Pkcs.dll" />
             </Component>
-            <Component Id="cmpB713FDF32036272D8DEB9766FB54CD23" Directory="TOOLS" Guid="{8384F43C-F78D-4931-8ECE-D0C9D86A9E6E}">
-                <File Id="filD83F7E8F2B6A10A6C795E9CAC0A555AE" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Text.Json.dll" />
+            <Component Id="cmp484D02432E5E736C7D1A6EE8C8C843C1" Directory="TOOLS" Guid="{4E74AA1B-59FB-49F5-9DFA-F5B3E2B24522}" Win64="$(var.Win64)">
+                <File Id="fil79F51B72AF6ED2326BC81C27045B048E" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Security.Cryptography.ProtectedData.dll" />
             </Component>
-            <Component Id="cmp6B04DD9593C65F73B266A2F4C31753F0" Directory="TOOLS" Guid="{7B9A933F-0D94-47EC-A277-3070E5CE704A}">
-                <File Id="filEC59D5CD48D9C8C5AC02E43EF85A1D52" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Threading.dll" />
+            <Component Id="cmp49625E1187CA33A3C31277EFD85E3EA8" Directory="TOOLS" Guid="{07B5091D-7432-46B2-9971-0A437312935B}" Win64="$(var.Win64)">
+                <File Id="filD5A6B936666B0237650E3E97D67C53F0" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Security.Cryptography.Xml.dll" />
             </Component>
-            <Component Id="cmpC5496740E25812B9B340976130FBDB85" Directory="TOOLS" Guid="{0A04250E-208A-4286-A779-78B8B04EE0C6}">
-                <File Id="fil4CB391169057F84A1A104B2FCADB9A96" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Threading.Tasks.Dataflow.dll" />
+            <Component Id="cmp33C808E4B6F5317E5B43093B693B4BF5" Directory="TOOLS" Guid="{C5F6147D-B4FD-4C57-A511-662ADC5F12BB}" Win64="$(var.Win64)">
+                <File Id="fil62B35DD8DAD8DEA3778753C0437B5423" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Security.Permissions.dll" />
             </Component>
-            <Component Id="cmpAFA450767977309D7B656808715102B9" Directory="TOOLS" Guid="{A262D022-69FA-4258-8747-7F8813798270}">
-                <File Id="fil6F4140B45D347C1A38AC781A0E75662C" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\System.Threading.Tasks.Extensions.dll" />
+            <Component Id="cmpBF49858C1CB032A94C67BA0DE7475A2F" Directory="TOOLS" Guid="{93CC3AB4-0786-495E-8D0C-E110441BFA6A}" Win64="$(var.Win64)">
+                <File Id="fil4A6B1F17CFF22188E3A1EA72BD12C0B6" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Security.Principal.Windows.dll" />
+            </Component>
+            <Component Id="cmp45DDE6E16F1C56AD5B8717CC78288799" Directory="TOOLS" Guid="{BD192DB2-109E-4220-99F6-0CABF1F1F73A}" Win64="$(var.Win64)">
+                <File Id="fil48940337F2976A6920F3B2B5CED178A9" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Text.Encodings.Web.dll" />
+            </Component>
+            <Component Id="cmpB713FDF32036272D8DEB9766FB54CD23" Directory="TOOLS" Guid="{8384F43C-F78D-4931-8ECE-D0C9D86A9E6E}" Win64="$(var.Win64)">
+                <File Id="filD83F7E8F2B6A10A6C795E9CAC0A555AE" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Text.Json.dll" />
+            </Component>
+            <Component Id="cmp6B04DD9593C65F73B266A2F4C31753F0" Directory="TOOLS" Guid="{7B9A933F-0D94-47EC-A277-3070E5CE704A}" Win64="$(var.Win64)">
+                <File Id="filEC59D5CD48D9C8C5AC02E43EF85A1D52" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Threading.dll" />
+            </Component>
+            <Component Id="cmpC5496740E25812B9B340976130FBDB85" Directory="TOOLS" Guid="{0A04250E-208A-4286-A779-78B8B04EE0C6}" Win64="$(var.Win64)">
+                <File Id="fil4CB391169057F84A1A104B2FCADB9A96" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Threading.Tasks.Dataflow.dll" />
+            </Component>
+            <Component Id="cmpAFA450767977309D7B656808715102B9" Directory="TOOLS" Guid="{A262D022-69FA-4258-8747-7F8813798270}" Win64="$(var.Win64)">
+                <File Id="fil6F4140B45D347C1A38AC781A0E75662C" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)System.Threading.Tasks.Extensions.dll" />
             </Component>
         </ComponentGroup>
     </Fragment>

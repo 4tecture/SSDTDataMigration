@@ -12,7 +12,7 @@
   <PropertyGroup>
     <Authors>4tecture GmbH</Authors>
     <Company>4tecture GmbH</Company>
-    <Copyright>Copyright 2020 (c) 4tecture GmbH. All rights reserved.</Copyright>
+    <Copyright>Copyright 2022 (c) 4tecture GmbH. All rights reserved.</Copyright>
     <PackageId>4tecture.CustomSSDTMigrationScripts</PackageId>
     <PackageProjectUrl>https://github.com/4tecture/SSDTDataMigration</PackageProjectUrl>
     <RepositoryUrl>https://github.com/4tecture/SSDTDataMigration.git</RepositoryUrl>
@@ -32,8 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.8.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

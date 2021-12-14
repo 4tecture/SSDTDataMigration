@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- http://alekdavis.blogspot.com/2011/05/build-32-and-64-bit-installers-using.html -->
+  <?define ProductName = "Custom SSDT Migration Scripts" ?>
+  <?define ProductVersion = "!(bind.FileVersion.fil84945FCEFCEAA15D6BE23F57282BD221)" ?>
+  <?define ProductAuthor = "4tecture GmbH" ?>
+
+  <?if $(var.Platform) = x64 ?>
+    <?define ProductDisplayName = "$(var.ProductName) 64-bit" ?>
+    <?define ProductUpgradeCode = "9e8529d2-4bf0-4bcc-95a4-eaf2af18d844" ?>
+    <?define Win64 = "yes" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <?else ?>
+    <?define ProductDisplayName = "$(var.ProductName)" ?>
+    <?define ProductUpgradeCode = "eefeb90d-3a51-4584-abd5-498f823716ad" ?>
+    <?define Win64 = "no" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+  <?endif ?>
+    
   <Product Id="*"
-           Name="Custom SSDT Migration Scripts !(bind.FileVersion.fil84945FCEFCEAA15D6BE23F57282BD221)"
+           Name="$(var.ProductDisplayName) (v$(var.ProductVersion))"
            Language="1033"
-           Version="!(bind.FileVersion.fil84945FCEFCEAA15D6BE23F57282BD221)"
-           Manufacturer="4tecture GmbH"
-           UpgradeCode="eefeb90d-3a51-4584-abd5-498f823716ad">
+           Version="$(var.ProductVersion)"
+           Manufacturer="$(var.ProductAuthor)"
+           UpgradeCode="$(var.ProductUpgradeCode)">
 
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
@@ -48,7 +65,7 @@
   <Fragment>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
         <Directory Id="MSBUILDFOLDER" Name="MSBuild">
           <Directory Id="INSTALLFOLDER" Name="4tecture">
             <Directory Id="BUILD" Name="build" />
@@ -59,7 +76,7 @@
     </Directory>
 
     <ComponentGroup Id="ProductBuildComponents" Directory="BUILD">
-      <Component Id="cmp774A2AD939D243C9802A333720E42D8A" Guid="*">
+      <Component Id="cmp774A2AD939D243C9802A333720E42D8A" Guid="*" Win64="$(var.Win64)">
         <File Id="fil46FBAD698A452030E313928987D44B71" KeyPath="yes" Source="$(var.CustomSSDTMigrationScripts.TargetDir)\CustomSSDTMigrationScripts.props" />
       </Component>
     </ComponentGroup>
