@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace CustomSSDTMigrationScripts
@@ -7,36 +9,35 @@ namespace CustomSSDTMigrationScripts
     {
         public ReferenceDataScriptTask()
         {
-
         }
 
         public override string ScriptTypeName => ScriptTypes.ReferenceDataScript;
 
-        public override ScriptSettings DefaultScriptSettings => new ScriptSettings
+        protected override ScriptSettings DefaultScriptSettings => new ScriptSettings
         {
-            ScriptBaseDirectory = Path.Combine(base.ProjectRootDirectory, "Scripts", "ReferenceDataScripts"),
+            ScriptBaseDirectory = Path.Combine(ProjectRootDirectory, "Scripts", "ReferenceDataScripts"),
             ScriptNamePattern = @"^(\d+)_(.*).sql",
             ScriptRecursiveSearch = true,
-            GeneratedScriptPath = Path.Combine(base.ProjectRootDirectory, "Scripts", "RunReferenceDataScriptsGenerated.sql"),
+            GeneratedScriptPath = Path.Combine(ProjectRootDirectory, "Scripts", "RunReferenceDataScriptsGenerated.sql"),
             ExecutionFilterMode = ScriptExecutionFilterMode.FILTER_BY_ALL,
             ExecutionFilterValue = null,
             TreatScriptNamePatternMismatchAsError = true,
             TreatHashMismatchAsError = true
         };
 
-        public override ScriptSettings CurrentScriptSettings => new ScriptSettings
+        public override ScriptSettings ScriptSettings => new ScriptSettings
         {
-            ScriptBaseDirectory = settings.ReferenceDataScripts.ScriptBaseDirectory ?? DefaultScriptSettings.ScriptBaseDirectory,
-            ScriptNamePattern = settings.ReferenceDataScripts.ScriptNamePattern ?? DefaultScriptSettings.ScriptNamePattern,
-            ScriptRecursiveSearch = settings.ReferenceDataScripts.ScriptRecursiveSearch ?? DefaultScriptSettings.ScriptRecursiveSearch,
-            GeneratedScriptPath = settings.ReferenceDataScripts.GeneratedScriptPath ?? DefaultScriptSettings.GeneratedScriptPath,
-            ExecutionFilterMode = settings.ReferenceDataScripts.ExecutionFilterMode ?? DefaultScriptSettings.ExecutionFilterMode,
-            ExecutionFilterValue = settings.ReferenceDataScripts.ExecutionFilterValue ?? DefaultScriptSettings.ExecutionFilterValue,
-            TreatScriptNamePatternMismatchAsError = settings.ReferenceDataScripts.TreatScriptNamePatternMismatchAsError ?? DefaultScriptSettings.TreatScriptNamePatternMismatchAsError,
-            TreatHashMismatchAsError = settings.ReferenceDataScripts.TreatHashMismatchAsError ?? DefaultScriptSettings.TreatHashMismatchAsError,
+            ScriptBaseDirectory = Settings.ReferenceDataScripts.ScriptBaseDirectory ?? DefaultScriptSettings.ScriptBaseDirectory,
+            ScriptNamePattern = Settings.ReferenceDataScripts.ScriptNamePattern ?? DefaultScriptSettings.ScriptNamePattern,
+            ScriptRecursiveSearch = Settings.ReferenceDataScripts.ScriptRecursiveSearch ?? DefaultScriptSettings.ScriptRecursiveSearch,
+            GeneratedScriptPath = Settings.ReferenceDataScripts.GeneratedScriptPath ?? DefaultScriptSettings.GeneratedScriptPath,
+            ExecutionFilterMode = Settings.ReferenceDataScripts.ExecutionFilterMode ?? DefaultScriptSettings.ExecutionFilterMode,
+            ExecutionFilterValue = Settings.ReferenceDataScripts.ExecutionFilterValue ?? DefaultScriptSettings.ExecutionFilterValue,
+            TreatScriptNamePatternMismatchAsError = Settings.ReferenceDataScripts.TreatScriptNamePatternMismatchAsError ?? DefaultScriptSettings.TreatScriptNamePatternMismatchAsError,
+            TreatHashMismatchAsError = Settings.ReferenceDataScripts.TreatHashMismatchAsError ?? DefaultScriptSettings.TreatHashMismatchAsError,
         };
 
-        public override void ExecuteScriptTask()
+        protected override void ExecuteScriptTask()
         {
             var sqlScript = $@"
 {SqlSnippets.ManufacturerHeader}
@@ -67,6 +68,70 @@ BEGIN TRY
         SET @DBEXISTS = 1
     END";
 
+            sqlScript += $@"
+    
+    -- Prefill the _MigrationScriptsHistory table with the existing migration scripts when applying the first time
+    IF @DBEXISTS=1 AND '{ScriptTypeName}'='{ScriptTypes.ReferenceDataScript}'
+    BEGIN    
+        IF OBJECT_ID(N'dbo._MigrationScriptsHistory', N'U') IS NOT NULL
+        BEGIN
+            IF NOT EXISTS (SELECT * FROM [dbo].[_MigrationScriptsHistory])
+            BEGIN";
+
+            var existingScripts = new List<Script>();
+
+            // add all PreScripts
+            var preScriptTask = new PreScriptTask();
+            preScriptTask.ProjectRootDirectory = ProjectRootDirectory;
+            preScriptTask.Initialize(false);
+            existingScripts.AddRange(GetScripts(preScriptTask.ScriptSettings));
+
+            // add all PostScripts
+            var postScriptTask = new PostScriptTask();
+            postScriptTask.ProjectRootDirectory = ProjectRootDirectory;
+            postScriptTask.Initialize(false);
+            existingScripts.AddRange(GetScripts(postScriptTask.ScriptSettings));
+
+            if (existingScripts.Any())
+            {
+                sqlScript += $@"
+                PRINT N'Set default values for MigrationScriptsHistory';
+
+                INSERT INTO [dbo].[_MigrationScriptsHistory] 
+                VALUES";
+
+                var separator = string.Empty;
+                foreach (var script in existingScripts)
+                {
+                    sqlScript += $@"
+                    {separator}('{script.UniqueScriptId}', GETUTCDATE(),'{script.ScriptHash}')";
+
+                    separator = ",";
+                }
+
+                // add entry into MigrationScriptsHistory table to set initialization status which blocks adding upcoming scripts
+                sqlScript += $@"
+                    {separator}('initialization\_migrationscriptshistory', GETUTCDATE(),'ZmI3OWI5ZThiOWU2ZGU5MTYwODFkYmJmN2M3ZjFlYzM=')";
+            }
+            else
+            {
+                sqlScript += $@"
+                PRINT N'No scripts found to add to MigrationScriptsHistory';";
+            }
+
+            sqlScript += $@"
+            END
+            ELSE
+            BEGIN
+                PRINT N'MigrationScriptsHistory already has entries, skipping.';
+            END
+        END
+        ELSE
+        BEGIN
+            RAISERROR ('ERROR: The migration script history table _MigrationScriptsHistory does not exists.', 18, 1);
+        END
+    END";
+
             var scripts = GetScripts();
             foreach (var script in scripts)
             {
@@ -74,7 +139,7 @@ BEGIN TRY
 
                 sqlScript += $@"
 
-    -- Only run scripts of type '{ScriptTypes.PreScript}' if the database exists, otherwise skip.
+    -- Only run scripts of type '{ScriptTypes.ReferenceDataScript}' if the database exists, otherwise skip.
     IF @DBEXISTS=1 AND '{ScriptTypeName}'='{ScriptTypes.ReferenceDataScript}'
     BEGIN    
         -- Run the new migration script
@@ -120,8 +185,8 @@ IF @@TRANCOUNT > 0
     COMMIT TRANSACTION;  
 GO";
 
-            File.WriteAllText(CurrentScriptSettings.GeneratedScriptPath, sqlScript, Encoding.UTF8);
-            Logger.LogMessage($@"Script execution file '{CurrentScriptSettings.GeneratedScriptPath}' has been generated.");
+            File.WriteAllText(ScriptSettings.GeneratedScriptPath, sqlScript, Encoding.UTF8);
+            Logger.LogMessage($@"Script execution file '{ScriptSettings.GeneratedScriptPath}' has been generated.");
         }
     }
 }

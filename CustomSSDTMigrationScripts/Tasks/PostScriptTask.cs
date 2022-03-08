@@ -6,33 +6,32 @@ namespace CustomSSDTMigrationScripts
     {
         public PostScriptTask()
         {
-
         }
 
         public override string ScriptTypeName => ScriptTypes.PostScript;
 
-        public override ScriptSettings DefaultScriptSettings => new ScriptSettings
+        protected override ScriptSettings DefaultScriptSettings => new ScriptSettings
         {
-            ScriptBaseDirectory = Path.Combine(base.ProjectRootDirectory, "Scripts", "PostScripts"),
+            ScriptBaseDirectory = Path.Combine(ProjectRootDirectory, "Scripts", "PostScripts"),
             ScriptNamePattern = @"^(\d{14})_(.*).sql",
             ScriptRecursiveSearch = true,
-            GeneratedScriptPath = Path.Combine(base.ProjectRootDirectory, "Scripts", "RunPostScriptsGenerated.sql"),
+            GeneratedScriptPath = Path.Combine(ProjectRootDirectory, "Scripts", "RunPostScriptsGenerated.sql"),
             ExecutionFilterMode = ScriptExecutionFilterMode.FILTER_BY_ALL,
             ExecutionFilterValue = null,
             TreatScriptNamePatternMismatchAsError = true,
             TreatHashMismatchAsError = true
         };
 
-        public override ScriptSettings CurrentScriptSettings => new ScriptSettings
+        public override ScriptSettings ScriptSettings => new ScriptSettings
         {
-            ScriptBaseDirectory = settings.PostScripts.ScriptBaseDirectory ?? DefaultScriptSettings.ScriptBaseDirectory,
-            ScriptNamePattern = settings.PostScripts.ScriptNamePattern ?? DefaultScriptSettings.ScriptNamePattern,
-            ScriptRecursiveSearch = settings.PostScripts.ScriptRecursiveSearch ?? DefaultScriptSettings.ScriptRecursiveSearch,
-            GeneratedScriptPath = settings.PostScripts.GeneratedScriptPath ?? DefaultScriptSettings.GeneratedScriptPath,
-            ExecutionFilterMode = settings.PostScripts.ExecutionFilterMode ?? DefaultScriptSettings.ExecutionFilterMode,
-            ExecutionFilterValue = settings.PostScripts.ExecutionFilterValue ?? DefaultScriptSettings.ExecutionFilterValue,
-            TreatScriptNamePatternMismatchAsError = settings.PostScripts.TreatScriptNamePatternMismatchAsError ?? DefaultScriptSettings.TreatScriptNamePatternMismatchAsError,
-            TreatHashMismatchAsError = settings.PostScripts.TreatHashMismatchAsError ?? DefaultScriptSettings.TreatHashMismatchAsError,
+            ScriptBaseDirectory = Settings.PostScripts.ScriptBaseDirectory ?? DefaultScriptSettings.ScriptBaseDirectory,
+            ScriptNamePattern = Settings.PostScripts.ScriptNamePattern ?? DefaultScriptSettings.ScriptNamePattern,
+            ScriptRecursiveSearch = Settings.PostScripts.ScriptRecursiveSearch ?? DefaultScriptSettings.ScriptRecursiveSearch,
+            GeneratedScriptPath = Settings.PostScripts.GeneratedScriptPath ?? DefaultScriptSettings.GeneratedScriptPath,
+            ExecutionFilterMode = Settings.PostScripts.ExecutionFilterMode ?? DefaultScriptSettings.ExecutionFilterMode,
+            ExecutionFilterValue = Settings.PostScripts.ExecutionFilterValue ?? DefaultScriptSettings.ExecutionFilterValue,
+            TreatScriptNamePatternMismatchAsError = Settings.PostScripts.TreatScriptNamePatternMismatchAsError ?? DefaultScriptSettings.TreatScriptNamePatternMismatchAsError,
+            TreatHashMismatchAsError = Settings.PostScripts.TreatHashMismatchAsError ?? DefaultScriptSettings.TreatHashMismatchAsError,
         };
     }
 }

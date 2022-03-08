@@ -1,1 +1,4 @@
 mode: Mainline
+branches:
+  master:
+    increment: Minor

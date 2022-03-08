@@ -30,13 +30,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
         {
             // Arrange
             var task = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(task.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(task.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Act
             var scripts = task.GetScripts();
 
             // Assert
-            Assert.AreEqual(sampels.ValidPrePostSamplesRecursiveCount, scripts.Count);
+            Assert.AreEqual(sampels.ValidPrePostSamplesRecursiveCount, scripts.Count());
         }
 
         [TestMethod]
@@ -44,13 +44,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
         {
             // Arrange
             var task = ScriptTaskHelper.GetPreScriptTask(TempFolder);
-            CreateSampleScripts(task.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(task.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Act
             var scripts = task.GetScripts();
 
             // Assert
-            Assert.AreEqual(sampels.ValidPrePostSamplesRecursiveCount, scripts.Count);
+            Assert.AreEqual(sampels.ValidPrePostSamplesRecursiveCount, scripts.Count());
         }
 
         [TestMethod]
@@ -58,13 +58,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
         {
             // Arrange
             var task = ScriptTaskHelper.GetReferenceDataScriptTask(TempFolder);
-            CreateSampleScripts(task.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidRefDataSamples);
+            CreateSampleScripts(task.ScriptSettings.ScriptBaseDirectory, sampels.ValidRefDataSamples);
 
             // Act
             var scripts = task.GetScripts();
 
             // Assert
-            Assert.AreEqual(sampels.ValidRefDataSamplesRecursiveCount, scripts.Count);
+            Assert.AreEqual(sampels.ValidRefDataSamplesRecursiveCount, scripts.Count());
         }
 
         [TestMethod]
@@ -73,14 +73,14 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             // Arrange
             ScriptTaskHelper.CreateTestSettings(TempFolder, new Settings { PostScripts = new ScriptSettings { ScriptRecursiveSearch = false } });
             var task = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(task.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(task.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
 
             // Act
             var scripts = task.GetScripts();
 
             // Assert
-            Assert.AreEqual(sampels.ValidPrePostSamplesRootCount, scripts.Count);
+            Assert.AreEqual(sampels.ValidPrePostSamplesRootCount, scripts.Count());
         }
 
         [TestMethod]
@@ -91,9 +91,9 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             var postTask = ScriptTaskHelper.GetPreScriptTask(TempFolder);
             var refDataTask = ScriptTaskHelper.GetPreScriptTask(TempFolder);
 
-            CreateSampleScripts(preTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
-            CreateSampleScripts(refDataTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.InvalidRefDataSamples);
+            CreateSampleScripts(preTask.ScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
+            CreateSampleScripts(refDataTask.ScriptSettings.ScriptBaseDirectory, sampels.InvalidRefDataSamples);
 
             // Assert
             Assert.ThrowsException<FormatException>(() => preTask.GetScripts());
@@ -116,14 +116,14 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
             var refDataTask = ScriptTaskHelper.GetReferenceDataScriptTask(TempFolder);
 
-            CreateSampleScripts(preTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
-            CreateSampleScripts(refDataTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.InvalidRefDataSamples);
+            CreateSampleScripts(preTask.ScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
+            CreateSampleScripts(refDataTask.ScriptSettings.ScriptBaseDirectory, sampels.InvalidRefDataSamples);
 
             // Assert
-            Assert.AreEqual(sampels.ValidPrePostSamplesRecursiveCount, preTask.GetScripts().Count);
-            Assert.AreEqual(sampels.ValidPrePostSamplesRecursiveCount, postTask.GetScripts().Count);
-            Assert.AreEqual(sampels.ValidRefDataSamplesRecursiveCount, refDataTask.GetScripts().Count);
+            Assert.AreEqual(sampels.ValidPrePostSamplesRecursiveCount, preTask.GetScripts().Count());
+            Assert.AreEqual(sampels.ValidPrePostSamplesRecursiveCount, postTask.GetScripts().Count());
+            Assert.AreEqual(sampels.ValidRefDataSamplesRecursiveCount, refDataTask.GetScripts().Count());
         }
 
         [TestMethod]
@@ -139,12 +139,12 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
             var refDataTask = ScriptTaskHelper.GetReferenceDataScriptTask(TempFolder);
 
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
-            CreateSampleScripts(refDataTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.InvalidRefDataSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.InvalidPrePostSamples);
+            CreateSampleScripts(refDataTask.ScriptSettings.ScriptBaseDirectory, sampels.InvalidRefDataSamples);
 
             // Assert
-            Assert.AreEqual(sampels.InvalidPrePostSamples.Count(), postTask.GetScripts().Count);
-            Assert.AreEqual(sampels.InvalidRefDataSamples.Count(), refDataTask.GetScripts().Count);
+            Assert.AreEqual(sampels.InvalidPrePostSamples.Count(), postTask.GetScripts().Count());
+            Assert.AreEqual(sampels.InvalidRefDataSamples.Count(), refDataTask.GetScripts().Count());
         }
 
         [TestMethod]
@@ -161,13 +161,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             });
 
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Act
             var scripts = postTask.GetScripts();
 
             // Assert
-            Assert.AreEqual(expectedScriptCount, scripts.Count);
+            Assert.AreEqual(expectedScriptCount, scripts.Count());
             if (expectedScriptCount > 0)
             {
                 Assert.AreEqual(sampels.ValidPrePostSamplesLatestRecursive, scripts.Last().Name);
@@ -188,13 +188,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             });
 
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Act
             var scripts = postTask.GetScripts();
 
             // Assert
-            Assert.AreEqual(expectedScriptCount, scripts.Count);
+            Assert.AreEqual(expectedScriptCount, scripts.Count());
             if (expectedScriptCount > 0)
             {
                 Assert.AreEqual(sampels.ValidPrePostSamplesLatestRoot, scripts.Last().Name);
@@ -214,13 +214,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             });
 
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Act
             var scripts = postTask.GetScripts();
 
             // Assert
-            Assert.AreEqual(expectedScriptCount, scripts.Count);
+            Assert.AreEqual(expectedScriptCount, scripts.Count());
             if (expectedScriptCount > 0)
             {
                 Assert.AreEqual(sampels.ValidPrePostSamplesLatestRecursive, scripts.Last().Name);
@@ -240,13 +240,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             });
 
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Act
             var scripts = postTask.GetScripts();
 
             // Assert
-            Assert.AreEqual(expectedScriptCount, scripts.Count);
+            Assert.AreEqual(expectedScriptCount, scripts.Count());
             if (expectedScriptCount > 0)
             {
                 Assert.AreEqual(sampels.ValidPrePostSamplesLatestRoot, scripts.Last().Name);
@@ -267,7 +267,7 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             });
 
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Assert
             Assert.ThrowsException<FormatException>(() => postTask.GetScripts());
@@ -285,13 +285,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             });
 
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Act
             var scripts = postTask.GetScripts();
 
             // Assert
-            Assert.AreEqual(expectedScriptCount, scripts.Count);
+            Assert.AreEqual(expectedScriptCount, scripts.Count());
             if (expectedScriptCount > 0)
             {
                 Assert.AreEqual(sampels.ValidPrePostSamplesLatestRecursive, scripts.Last().Name);
@@ -310,13 +310,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             });
 
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Act
             var scripts = postTask.GetScripts();
 
             // Assert
-            Assert.AreEqual(expectedScriptCount, scripts.Count);
+            Assert.AreEqual(expectedScriptCount, scripts.Count());
             if (expectedScriptCount > 0)
             {
                 Assert.AreEqual(sampels.ValidPrePostSamplesLatestRoot, scripts.Last().Name);
@@ -333,13 +333,13 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
             });
 
             var postTask = ScriptTaskHelper.GetPostScriptTask(TempFolder);
-            CreateSampleScripts(postTask.CurrentScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
+            CreateSampleScripts(postTask.ScriptSettings.ScriptBaseDirectory, sampels.ValidPrePostSamples);
 
             // Assert
             Assert.ThrowsException<ArgumentException>(() => postTask.GetScripts());
         }
 
-        private void CreateSampleScripts(string dir, List<string> sampleFiles)
+        private void CreateSampleScripts(string dir, IEnumerable<string> sampleFiles)
         {
             // Cleanup and recreate sample files
             if (Directory.Exists(dir))
@@ -347,7 +347,7 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
                 Directory.Delete(dir, true);
             }
 
-            sampleFiles.ForEach(f =>
+            sampleFiles.ToList().ForEach(f =>
             {
                 FileInfo fi = new FileInfo(Path.Combine(dir, f));
                 if (!fi.Directory.Exists)
@@ -355,9 +355,7 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.ScriptBaseTaskTests
                     fi.Directory.Create();
                 }
 
-                using (var fileStream = fi.Create())
-                {
-                }
+                using var fileStream = fi.Create();
             });
         }
     }

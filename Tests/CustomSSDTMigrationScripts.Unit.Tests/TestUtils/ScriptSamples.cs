@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomSSDTMigrationScripts.Unit.Tests.TestUtils
 {
@@ -6,17 +7,16 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.TestUtils
     {
         public ScriptSamples()
         {
-
         }
 
         // ===========================================================================
         // Valid: PRE / POST
         // ===========================================================================
         public int ValidPrePostSamplesRootCount => 3;
-        public int ValidPrePostSamplesRecursiveCount => ValidPrePostSamples.Count;
+        public int ValidPrePostSamplesRecursiveCount => ValidPrePostSamples.Count();
         public string ValidPrePostSamplesLatestRoot => "20180228150101_Script6.sql";
         public string ValidPrePostSamplesLatestRecursive => "20180504070000_Script7.sql";
-        public List<string> ValidPrePostSamples => new List<string>
+        public IEnumerable<string> ValidPrePostSamples => new List<string>
         {
             @"20180102124055_Script1.sql",
             @"20180102124100_Script2.sql",
@@ -30,7 +30,7 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.TestUtils
         // ===========================================================================
         // Invalid: PRE / POST
         // ===========================================================================
-        public List<string> InvalidPrePostSamples => new List<string>(ValidPrePostSamples) {
+        public IEnumerable<string> InvalidPrePostSamples => new List<string>(ValidPrePostSamples) {
             @"subfolder3/Script8.sql",
             "201801021210_Script9.sql"
         };
@@ -39,11 +39,11 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.TestUtils
         // Valid: Reference Data
         // ===========================================================================
         public int ValidRefDataSamplesRootCount => 4;
-        public int ValidRefDataSamplesRecursiveCount => ValidRefDataSamples.Count;
+        public int ValidRefDataSamplesRecursiveCount => ValidRefDataSamples.Count();
         public string ValidRefDataSamplesLatestRoot => "99_Script99.sql";
         public string ValidRefDataSamplesLatestRecursive => "111_Script111.sql";
 
-        public List<string> ValidRefDataSamples => new List<string>
+        public IEnumerable<string> ValidRefDataSamples => new List<string>
         {
             @"0_Script0.sql",
             @"1_Script1.sql",
@@ -56,7 +56,7 @@ namespace CustomSSDTMigrationScripts.Unit.Tests.TestUtils
         // ===========================================================================
         // Invalid: Reference Data
         // ===========================================================================
-        public List<string> InvalidRefDataSamples => new List<string>(ValidRefDataSamples) {
+        public IEnumerable<string> InvalidRefDataSamples => new List<string>(ValidRefDataSamples) {
             @"subfolder3/Script45.sql",
             "a1_Script46.sql"
         };

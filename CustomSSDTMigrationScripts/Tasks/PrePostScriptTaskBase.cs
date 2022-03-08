@@ -10,7 +10,7 @@ namespace CustomSSDTMigrationScripts
         {
         }
 
-        public override void ExecuteScriptTask()
+        protected override void ExecuteScriptTask()
         {
             var sqlScript = $@"
 {SqlSnippets.ManufacturerHeader}
@@ -84,7 +84,7 @@ BEGIN TRY
                             FROM dbo.[_MigrationScriptsHistory]
                             WHERE [ScriptHash] = '{hashBase64}')
             BEGIN
-                IF {Convert.ToInt32(CurrentScriptSettings.TreatHashMismatchAsError)}!=0
+                IF {Convert.ToInt32(ScriptSettings.TreatHashMismatchAsError)}!=0
                     RAISERROR ('ERROR: The hash value for the {ScriptTypeName} migration script {script.Name} does not match with the origin registered and executed script.', 18, 1);
                 ELSE
                     -- SEVERITY 0-9 is treated as warning
@@ -108,7 +108,7 @@ BEGIN CATCH
            @ErrorSeverity = ERROR_SEVERITY(),
            @ErrorState = ERROR_STATE();
 
-	-- Rollback all transactions if any of the {ScriptTypeName} scripts failed.
+    -- Rollback all transactions if any of the {ScriptTypeName} scripts failed.
     IF @@TRANCOUNT > 0  
         ROLLBACK TRANSACTION;
 
@@ -121,8 +121,8 @@ IF @@TRANCOUNT > 0
     COMMIT TRANSACTION;  
 GO";
 
-            File.WriteAllText(CurrentScriptSettings.GeneratedScriptPath, sqlScript, Encoding.UTF8);
-            Logger.LogMessage($@"Script execution file '{CurrentScriptSettings.GeneratedScriptPath}' has been generated.");
+            File.WriteAllText(ScriptSettings.GeneratedScriptPath, sqlScript, Encoding.UTF8);
+            Logger.LogMessage($@"Script execution file '{ScriptSettings.GeneratedScriptPath}' has been generated.");
         }
     }
 }

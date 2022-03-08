@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <RepoRoot>$([System.IO.Path]::GetDirectoryName($([MSBuild]::GetPathOfFileAbove('.gitignore', '$(MSBuildThisFileDirectory)'))))</RepoRoot>
+  </PropertyGroup>
+
+  <ImportGroup Condition=" '$(MSBuildProjectExtension)' == '.csproj' ">
+    <Import Project=".\common.props" />
+    <Import Project=".\file-version.props" />
+    <Import Project=".\code-analysis.props" />
+  </ImportGroup>
+
+</Project>

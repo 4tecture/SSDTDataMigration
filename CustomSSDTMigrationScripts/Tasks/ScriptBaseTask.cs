@@ -11,7 +11,6 @@ namespace CustomSSDTMigrationScripts
     {
         private const string SQL_SCRIPT_EXTENSION = "sql";
         private readonly ISettingsProvider settingsProvider = new JsonSettingsProvider();
-        protected Settings settings;
 
         public ScriptBaseTask()
         {
@@ -19,12 +18,17 @@ namespace CustomSSDTMigrationScripts
             Logger.logger = base.Log;
         }
 
+        protected Settings Settings { get; private set; }
+
         public string ProjectRootDirectory { get; set; }
 
         public abstract string ScriptTypeName { get; }
-        public abstract ScriptSettings DefaultScriptSettings { get; }
-        public abstract ScriptSettings CurrentScriptSettings { get; }
-        public abstract void ExecuteScriptTask();
+
+        protected abstract ScriptSettings DefaultScriptSettings { get; }
+
+        public abstract ScriptSettings ScriptSettings { get; }
+
+        protected abstract void ExecuteScriptTask();
 
         public override bool Execute()
         {
@@ -43,95 +47,106 @@ namespace CustomSSDTMigrationScripts
             }
         }
 
-        public virtual void Initialize()
+        public void Initialize(bool cleanup = true)
         {
             // read migration settings
-            settings = settingsProvider.GetSettings(ProjectRootDirectory);
+            Settings = settingsProvider.GetSettings(ProjectRootDirectory);
 
             // delete generated scripts
-            if (File.Exists(CurrentScriptSettings.GeneratedScriptPath))
+            if (cleanup)
             {
-                File.Delete(CurrentScriptSettings.GeneratedScriptPath);
-                Logger.LogMessage($"Generated script file \"{CurrentScriptSettings.GeneratedScriptPath}\" has been deleted.");
+                if (File.Exists(ScriptSettings.GeneratedScriptPath))
+                {
+                    File.Delete(ScriptSettings.GeneratedScriptPath);
+                    Logger.LogMessage($"Generated script file \"{ScriptSettings.GeneratedScriptPath}\" has been deleted.");
+                }
             }
         }
 
-        public List<Script> GetScripts()
+        public IEnumerable<Script> GetScripts()
+        {
+            return GetScripts(ScriptSettings);
+        }
+
+        public IEnumerable<Script> GetScripts(ScriptSettings scriptSettings)
         {
             var scripts = new List<Script>();
-            var sqlScripts = new List<FileInfo>();
-            var scriptSearchOption = CurrentScriptSettings.ScriptRecursiveSearch.Value ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-
-            // Get scripts
-            if (!Directory.Exists(CurrentScriptSettings.ScriptBaseDirectory))
+            if (scriptSettings is not null)
             {
-                Logger.LogMessage($"The script base directory {CurrentScriptSettings.ScriptBaseDirectory} does not exist.");
-                return scripts;
-            }
+                var scriptSearchOption = scriptSettings.ScriptRecursiveSearch.Value ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-            sqlScripts = Directory.GetFiles(CurrentScriptSettings.ScriptBaseDirectory, $"*.{SQL_SCRIPT_EXTENSION}", scriptSearchOption).Select(s => new FileInfo(s)).ToList();
-            if (sqlScripts.Any())
-            {
-                Logger.LogMessage($"Found total {sqlScripts.Count} sql scripts. Start validating and filtering scripts...");
-            }
-            else
-            {
-                Logger.LogWarning($"Found no sql scripts in {CurrentScriptSettings.ScriptBaseDirectory}.");
-            }
+                // Get scripts
+                if (!Directory.Exists(scriptSettings.ScriptBaseDirectory))
+                {
+                    Logger.LogMessage($"The script base directory {scriptSettings.ScriptBaseDirectory} does not exist.");
+                    return scripts;
+                }
 
-            // Validate by naming pattern
-            sqlScripts = FilterScriptsByNamingPattern(sqlScripts);
-            Logger.LogMessage($"Filtered ");
-            scripts = ExtractScriptInformation(sqlScripts);
-            scripts = FilterScriptsByExecutionMode(scripts);
+                var sqlScripts = Directory.GetFiles(scriptSettings.ScriptBaseDirectory, $"*.{SQL_SCRIPT_EXTENSION}", scriptSearchOption).Select(s => new FileInfo(s)).ToList();
+                if (sqlScripts.Any())
+                {
+                    Logger.LogMessage($"Found total {sqlScripts.Count} sql scripts. Start validating and filtering scripts...");
+                }
+                else
+                {
+                    Logger.LogWarning($"Found no sql scripts in {scriptSettings.ScriptBaseDirectory}.");
+                }
+
+                // Validate by naming pattern
+                sqlScripts = FilterScriptsByNamingPattern(scriptSettings, sqlScripts);
+                Logger.LogMessage($"Filtered ");
+                scripts = ExtractScriptInformation(scriptSettings, sqlScripts);
+                scripts = FilterScriptsByExecutionMode(scriptSettings, scripts);
+            }
 
             return scripts.OrderBy(i => i.OrderCriteria).ToList();
         }
 
-        private List<Script> FilterScriptsByExecutionMode(List<Script> scripts)
+        private List<Script> FilterScriptsByExecutionMode(ScriptSettings scriptSettings, List<Script> scripts)
         {
+            var filteredScripts = new List<Script>(scripts);
             // Order by descending, newest scripts first
-            switch (CurrentScriptSettings.ExecutionFilterMode.ToLower())
+            switch (scriptSettings.ExecutionFilterMode.ToLower())
             {
                 case ScriptExecutionFilterMode.FILTER_BY_COUNT:
-                    var filterCount = int.Parse(CurrentScriptSettings.ExecutionFilterValue);
+                    var filterCount = int.Parse(scriptSettings.ExecutionFilterValue);
                     if (filterCount < 0)
                     {
                         throw new ArgumentException($"Invalid execution filter value (count): {filterCount}");
                     }
 
-                    scripts = scripts.OrderByDescending(s => s.OrderCriteria).Take(filterCount).ToList();
+                    filteredScripts = filteredScripts.OrderByDescending(s => s.OrderCriteria).Take(filterCount).ToList();
                     break;
                 case ScriptExecutionFilterMode.FILTER_BY_DAYS:
-                    var filterDays = double.Parse(CurrentScriptSettings.ExecutionFilterValue);
+                    var filterDays = double.Parse(scriptSettings.ExecutionFilterValue);
                     if (filterDays < 0)
                     {
                         throw new ArgumentException($"Invalid execution filter value (days): {filterDays}");
                     }
 
-                    scripts = scripts.Where(s => DateTime.ParseExact(s.OrderCriteria, "yyyyMMddHHmmss", CultureInfo.InvariantCulture) >= DateTime.Now.AddDays(-filterDays).Date).ToList();
+                    filteredScripts = filteredScripts.Where(s => DateTime.ParseExact(s.OrderCriteria, "yyyyMMddHHmmss", CultureInfo.InvariantCulture) >= DateTime.Now.AddDays(-filterDays).Date).ToList();
                     break;
                 case ScriptExecutionFilterMode.FILTER_BY_DATE:
-                    var filterDate = DateTime.ParseExact(CurrentScriptSettings.ExecutionFilterValue, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-                    scripts = scripts.Where(s => DateTime.ParseExact(s.OrderCriteria, "yyyyMMddHHmmss", CultureInfo.InvariantCulture) >= filterDate).ToList();
+                    var filterDate = DateTime.ParseExact(scriptSettings.ExecutionFilterValue, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                    filteredScripts = filteredScripts.Where(s => DateTime.ParseExact(s.OrderCriteria, "yyyyMMddHHmmss", CultureInfo.InvariantCulture) >= filterDate).ToList();
                     break;
                 case ScriptExecutionFilterMode.FILTER_BY_ALL:
                     // no filtering applied, take all scripts
                     break;
                 default:
-                    throw new ArgumentException($"Unknown execution filter mode {CurrentScriptSettings.ExecutionFilterMode}");
+                    throw new ArgumentException($"Unknown execution filter mode {scriptSettings.ExecutionFilterMode}");
             }
 
             // Order by ascending, newest scripts last
-            return scripts;
+            return filteredScripts;
         }
 
-        private List<Script> ExtractScriptInformation(List<FileInfo> sqlScripts)
+        private List<Script> ExtractScriptInformation(ScriptSettings scriptSettings, List<FileInfo> sqlScripts)
         {
             var validScripts = new List<Script>();
             foreach (var sqlScript in sqlScripts)
             {
-                var match = Regex.Match(sqlScript.Name, CurrentScriptSettings.ScriptNamePattern);
+                var match = Regex.Match(sqlScript.Name, scriptSettings.ScriptNamePattern);
 
                 // Extract order criteria
                 var orderCriteria = match.Groups[1].Value;
@@ -140,10 +155,15 @@ namespace CustomSSDTMigrationScripts
                     throw new ArgumentNullException($"The order criteria part cannot be extracted from {sqlScript.Name}");
                 }
 
+                var uniqueScriptId = sqlScript.FullName
+                    .Replace(new FileInfo(scriptSettings.ScriptBaseDirectory).Directory.FullName, string.Empty)
+                    .Replace("/", @"\")
+                    .Substring(1);
+
                 // Create new script object
                 validScripts.Add(new Script
                 {
-                    UniqueScriptId = sqlScript.FullName.Replace($@"{new FileInfo(CurrentScriptSettings.ScriptBaseDirectory).Directory.FullName}\", ""),
+                    UniqueScriptId = uniqueScriptId,
                     Name = sqlScript.Name,
                     OrderCriteria = orderCriteria,
                     MigrationType = ScriptTypeName,
@@ -154,20 +174,20 @@ namespace CustomSSDTMigrationScripts
             return validScripts;
         }
 
-        private List<FileInfo> FilterScriptsByNamingPattern(List<FileInfo> sqlScripts)
+        private List<FileInfo> FilterScriptsByNamingPattern(ScriptSettings scriptSettings, List<FileInfo> sqlScripts)
         {
             var validScripts = new List<FileInfo>();
             foreach (var sqlScript in sqlScripts)
             {
                 // Verify script naming convention
-                var match = Regex.Match(sqlScript.Name, CurrentScriptSettings.ScriptNamePattern);
-                if (!match.Success && CurrentScriptSettings.TreatScriptNamePatternMismatchAsError.Value)
+                var match = Regex.Match(sqlScript.Name, scriptSettings.ScriptNamePattern);
+                if (!match.Success && scriptSettings.TreatScriptNamePatternMismatchAsError.Value)
                 {
-                    throw new FormatException($"The sql script {sqlScript.FullName} does not meet the naming pattern {CurrentScriptSettings.ScriptNamePattern}.");
+                    throw new FormatException($"The sql script {sqlScript.FullName} does not meet the naming pattern {scriptSettings.ScriptNamePattern}.");
                 }
                 else if (!match.Success)
                 {
-                    Logger.LogWarning($"The sql script {sqlScript.FullName} does not meet the naming pattern {CurrentScriptSettings.ScriptNamePattern} and will be ignored.");
+                    Logger.LogWarning($"The sql script {sqlScript.FullName} does not meet the naming pattern {scriptSettings.ScriptNamePattern} and will be ignored.");
                 }
                 else
                 {
